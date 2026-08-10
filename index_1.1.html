@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Awakening">
+<meta name="theme-color" content="#020509">
+<meta name="format-detection" content="telephone=no">
+<link rel="apple-touch-icon" href="icon-512.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+<link rel="manifest" href="manifest.json">
+<title>Awakening Path</title>
+<meta name="application-name" content="Awakening">
+<meta name="apple-mobile-web-app-title" content="Awakening">
+<style>
+  :root{
+    --bg:#020509;
+    --bg2:#050b16;
+    --panel:#0a1120;
+    --panel2:#060b16;
+    --line:rgba(56,212,255,.22);
+    --accent:#38d4ff;
+    --accent-soft:rgba(56,212,255,.14);
+    --violet:#8b7cff;
+    --gold:#ffd166;
+    --text:#dfe9f6;
+    --text-dim:#5b7089;
+    --danger:#ff5c7a;
+    --success:#4ade80;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    position:relative;
+    overflow-x:hidden;
+    background-image:linear-gradient(120deg, #1a0b30 0%, #150c38 18%, #0b1230 40%, #060b1c 60%, #030712 80%, #150c38 100%);
+    background-size:340% 340%;
+    animation:bgFade 24s ease-in-out infinite;
+    color:var(--text);
+    font-family:'Rajdhani',sans-serif;
+    min-height:100vh;
+  }
+  body::before{
+    content:'';
+    position:fixed;inset:0;z-index:0;pointer-events:none;
+    background-image:
+      linear-gradient(rgba(56,212,255,.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(56,212,255,.035) 1px, transparent 1px),
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(56,212,255,.08), transparent 60%),
+      radial-gradient(ellipse 60% 40% at 90% 100%, rgba(139,124,255,.08), transparent 60%);
+    background-size:40px 40px, 40px 40px, cover, cover;
+  }
+  @keyframes bgFade{
+    0%{background-position:0% 20%;}
+    50%{background-position:100% 80%;}
+    100%{background-position:0% 20%;}
+  }
+  #root{position:relative;z-index:1;max-width:720px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;padding-bottom:116px;}
+
+  /* header */
+  header.hud{
+    position:sticky;top:0;z-index:20;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:16px 18px;
+    background:linear-gradient(180deg, rgba(3,7,12,.96), rgba(3,7,12,.85));
+    border-bottom:1px solid var(--line);
+    backdrop-filter:blur(6px);
+  }
+  .logo{
+    font-family:'Orbitron',sans-serif;font-weight:800;letter-spacing:.12em;
+    font-size:14px;color:var(--accent);white-space:nowrap;
+    text-shadow:0 0 12px rgba(56,212,255,.6), 0 0 28px rgba(56,212,255,.25);
+  }
+  .logo span{color:var(--text-dim);font-size:10px;letter-spacing:.16em;display:block;font-family:'JetBrains Mono',monospace;font-weight:400;margin-top:2px;text-shadow:none;}
+  .hud-chip{
+    display:flex;align-items:center;gap:8px;
+    font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-dim);
+    border:1px solid var(--line);padding:6px 10px;background:var(--accent-soft);
+  }
+  .hud-chip b{color:var(--accent);font-family:'Orbitron',sans-serif;font-size:12px;letter-spacing:.05em;}
+
+  main{flex:1;padding:18px 16px 8px;}
+
+  /* system panel */
+  .sys-panel{
+    position:relative;
+    background:linear-gradient(160deg,var(--panel),var(--panel2));
+    border:1px solid var(--line);
+    padding:18px;
+    margin-bottom:16px;
+  }
+  .br{position:absolute;width:13px;height:13px;pointer-events:none;}
+  .br-tl{top:-1px;left:-1px;border-top:2px solid var(--accent);border-left:2px solid var(--accent);}
+  .br-tr{top:-1px;right:-1px;border-top:2px solid var(--accent);border-right:2px solid var(--accent);}
+  .br-bl{bottom:-1px;left:-1px;border-bottom:2px solid var(--accent);border-left:2px solid var(--accent);}
+  .br-br{bottom:-1px;right:-1px;border-bottom:2px solid var(--accent);border-right:2px solid var(--accent);}
+
+  h1.page-title{
+    font-family:'Orbitron',sans-serif;font-size:15px;letter-spacing:.22em;color:var(--text);
+    margin:4px 2px 16px;text-transform:uppercase;display:flex;align-items:center;gap:10px;
+  }
+  h1.page-title::before{content:'';width:8px;height:8px;background:var(--accent);box-shadow:0 0 8px var(--accent);}
+  h1.page-title.centered{justify-content:center;}
+  h1.page-title.centered::after{content:'';width:8px;height:8px;background:var(--accent);box-shadow:0 0 8px var(--accent);}
+
+  .penalty-warning{
+    display:flex;align-items:center;justify-content:center;gap:10px;
+    margin-top:6px;padding:12px 16px;
+    border:1px solid rgba(255,92,122,.4);background:rgba(255,92,122,.06);
+    font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.03em;color:var(--danger);
+    text-align:center;
+  }
+
+  /* train cards */
+  .quest-card .qhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+  .qhead .qname{font-family:'Orbitron',sans-serif;font-size:13px;letter-spacing:.12em;color:var(--text);display:flex;align-items:center;gap:10px;}
+  .qhead .qicon{font-size:18px;filter:drop-shadow(0 0 6px rgba(56,212,255,.5));}
+  .qhead .qnum{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--accent);}
+  .qhead .qnum .goal{color:var(--text-dim);}
+  .bar-track{height:10px;background:#050810;border:1px solid var(--line);position:relative;overflow:hidden;margin-bottom:14px;}
+  .bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--violet));box-shadow:0 0 10px rgba(56,212,255,.6);transition:width .4s ease;}
+  .bar-fill.done{background:linear-gradient(90deg,var(--gold),#ffb347);box-shadow:0 0 12px rgba(255,209,102,.7);}
+  .btn-row{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;}
+  .add-btn{
+    font-family:'JetBrains Mono',monospace;font-weight:600;font-size:13px;
+    background:rgba(56,212,255,.06);border:1px solid var(--line);color:var(--accent);
+    padding:10px 0;cursor:pointer;letter-spacing:.05em;transition:transform .08s ease, background .15s ease;
+  }
+  .add-btn:hover{background:rgba(56,212,255,.16);}
+  .add-btn:active{transform:scale(.93);background:rgba(56,212,255,.28);}
+  .sub-btn{background:rgba(255,92,122,.06);border-color:rgba(255,92,122,.35);color:var(--danger);}
+  .sub-btn:hover{background:rgba(255,92,122,.16);}
+  .sub-btn:active{background:rgba(255,92,122,.28);}
+  .rest-btn{background:rgba(255,209,102,.08);border-color:rgba(255,209,102,.3);color:var(--gold);font-size:11px;}
+  .rest-btn:hover{background:rgba(255,209,102,.18);}
+  .rest-btn:active{background:rgba(255,209,102,.3);}
+  .cleared-tag{
+    font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;color:var(--gold);
+    border:1px solid rgba(255,209,102,.4);padding:2px 6px;margin-left:8px;
+  }
+
+  /* logs page */
+  .log-day{margin-bottom:14px;}
+  .log-day .ldate{font-family:'Orbitron',sans-serif;font-size:12px;letter-spacing:.1em;color:var(--text);margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;}
+  .ldate .dow{color:var(--text-dim);font-family:'JetBrains Mono',monospace;font-weight:400;font-size:11px;}
+  .ldate .xp{color:var(--accent);font-family:'JetBrains Mono',monospace;font-size:11px;}
+  .ldate .xp.penalty{color:var(--danger);}
+  .fail-tag{
+    display:inline-block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;color:var(--danger);
+    border:1px solid rgba(255,92,122,.4);background:rgba(255,92,122,.06);padding:3px 8px;margin-bottom:10px;
+  }
+  .log-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
+  .log-item{
+    display:flex;align-items:center;justify-content:space-between;
+    font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-dim);
+    background:rgba(56,212,255,.04);border:1px solid rgba(56,212,255,.1);padding:8px 10px;
+  }
+  .log-item .val{color:var(--text);}
+  .log-item.done{border-color:rgba(255,209,102,.4);color:var(--gold);}
+  .log-item.done .val{color:var(--gold);}
+  .empty-msg{
+    text-align:center;padding:40px 20px;color:var(--text-dim);
+    font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.6;
+  }
+  .empty-msg .tag{color:var(--accent);font-family:'Orbitron',sans-serif;font-size:12px;letter-spacing:.15em;display:block;margin-bottom:10px;}
+
+  /* profile */
+  .profile-top{display:flex;flex-direction:column;align-items:center;text-align:center;padding:26px 18px 10px;}
+  .rank-badge{
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Orbitron',sans-serif;font-weight:900;font-size:88px;line-height:1;
+    margin-bottom:10px;position:relative;
+  }
+  .player-name{font-family:'Orbitron',sans-serif;font-size:17px;letter-spacing:.08em;color:var(--text);cursor:pointer;margin-bottom:4px;}
+  .player-name::after{content:' ✎';color:var(--text-dim);font-size:12px;}
+  .name-input{
+    font-family:'Orbitron',sans-serif;font-size:17px;letter-spacing:.08em;color:var(--text);
+    background:transparent;border:none;border-bottom:1px solid var(--accent);
+    text-align:center;outline:none;padding:2px 4px;margin-bottom:4px;max-width:220px;width:220px;
+  }
+  .rank-title{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-dim);margin-bottom:18px;letter-spacing:.05em;}
+  .xp-block{width:100%;max-width:340px;margin-bottom:6px;}
+  .xp-block .lvl-row{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-dim);margin-bottom:6px;}
+  .xp-block .lvl-row b{color:var(--accent);}
+  .flavor{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-dim);font-style:italic;max-width:320px;margin:14px auto 0;line-height:1.5;}
+
+  .stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:6px;}
+  .stat-box{padding:14px;text-align:center;}
+  .stat-box .sv{font-family:'JetBrains Mono',monospace;font-size:20px;color:var(--accent);}
+  .stat-box .sl{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-dim);letter-spacing:.1em;margin-top:4px;}
+
+  .reset-btn{
+    width:100%;margin-top:8px;padding:12px;background:none;border:1px solid rgba(255,92,122,.35);
+    color:var(--danger);font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.08em;cursor:pointer;
+  }
+  .reset-btn:hover{background:rgba(255,92,122,.08);}
+  .reset-btn.armed{background:rgba(255,92,122,.16);color:var(--text);}
+
+  /* bottom bar (timer + nav) */
+  .bottom-bar{
+    position:fixed;bottom:0;left:0;right:0;z-index:30;
+    max-width:720px;margin:0 auto;
+    background:linear-gradient(0deg, rgba(2,5,9,.97), rgba(2,5,9,.88));
+    backdrop-filter:blur(6px);
+  }
+  .timer-strip{
+    display:flex;align-items:center;justify-content:center;
+    padding:8px 0;border-top:1px solid var(--line);
+  }
+  .timer-strip .dt-clock{font-family:'JetBrains Mono',monospace;font-size:16px;letter-spacing:.1em;color:var(--accent);text-shadow:0 0 10px rgba(56,212,255,.5);}
+  .timer-strip .dt-clock.urgent{color:var(--danger);text-shadow:0 0 10px rgba(255,92,122,.6);}
+  nav.hud-nav{
+    display:flex;
+    border-top:1px solid var(--line);
+  }
+  .nav-btn{
+    flex:1;text-align:center;padding:13px 0 11px;background:none;border:none;color:var(--text-dim);
+    font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:.12em;cursor:pointer;
+    display:flex;flex-direction:column;align-items:center;gap:4px;position:relative;
+  }
+  .nav-btn .ic{font-size:18px;}
+  .nav-btn.active{color:var(--accent);}
+  .nav-btn.active::before{content:'';position:absolute;top:0;left:20%;right:20%;height:2px;background:var(--accent);box-shadow:0 0 8px var(--accent);}
+
+  /* toasts */
+  #toast-wrap{position:fixed;top:14px;left:0;right:0;z-index:100;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none;}
+  .toast{
+    font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);
+    background:rgba(5,10,18,.95);border:1px solid var(--line);padding:10px 18px;
+    max-width:90%;text-align:center;letter-spacing:.03em;
+    animation:toastIn .35s ease, toastOut .4s ease 2.1s forwards;
+    box-shadow:0 0 20px rgba(56,212,255,.15);
+  }
+  .toast.clear{color:var(--gold);border-color:rgba(255,209,102,.4);}
+  @keyframes toastIn{from{opacity:0;transform:translateY(-10px);}to{opacity:1;transform:translateY(0);}}
+  @keyframes toastOut{to{opacity:0;transform:translateY(-8px);}}
+
+  #levelup-overlay{
+    position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;
+    background:rgba(2,4,8,.75);backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:opacity .3s ease;
+  }
+  #levelup-overlay.show{opacity:1;pointer-events:auto;}
+  .lu-box{text-align:center;font-family:'Orbitron',sans-serif;animation:luPop .5s ease;}
+  .lu-box .lu-label{font-size:12px;letter-spacing:.4em;color:var(--accent);margin-bottom:10px;}
+  .lu-box .lu-big{font-size:48px;font-weight:900;color:var(--gold);text-shadow:0 0 24px rgba(255,209,102,.7);}
+  .lu-box .lu-sub{margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text-dim);letter-spacing:.05em;}
+  @keyframes luPop{from{opacity:0;transform:scale(.8);}to{opacity:1;transform:scale(1);}}
+
+  @media (min-width:600px){
+    .train-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+    .train-grid .sys-panel{margin-bottom:0;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:.001s !important;transition-duration:.001s !important;}
+    body{animation:none;background-position:0% 20%;}
+  }
+</style>
+</head>
+<body>
+<div id="root">
+  <header class="hud">
+    <div class="logo">AWAKENING PATH<span>TRAINING SYSTEM</span></div>
+    <div class="hud-chip" id="hud-chip">LV.<b id="hud-lvl">1</b>&nbsp;·&nbsp;<b id="hud-rank">E</b></div>
+  </header>
+  <main id="app-content"></main>
+  <div class="bottom-bar">
+    <div class="timer-strip"><span class="dt-clock" id="day-timer-clock">00:00:00</span></div>
+    <nav class="hud-nav">
+      <button class="nav-btn" data-tab="train"><span class="ic">⚔</span>TRAIN</button>
+      <button class="nav-btn" data-tab="logs"><span class="ic">📜</span>LOGS</button>
+      <button class="nav-btn" data-tab="profile"><span class="ic">🛡</span>PROFILE</button>
+    </nav>
+  </div>
+</div>
+<div id="toast-wrap"></div>
+<div id="levelup-overlay"><div class="lu-box">
+  <div class="lu-label">SYSTEM NOTICE</div>
+  <div class="lu-big" id="lu-text">LEVEL UP</div>
+  <div class="lu-sub" id="lu-sub"></div>
+</div></div>
+
+<script>
+(function(){
+  // Service worker
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js');
+  }
+
+  const GOALS = { steps:10000, pushups:100, squats:100, crunches:100 };
+  const LABELS = { steps:'STEPS', pushups:'PUSH-UPS', squats:'SQUATS', crunches:'CRUNCHES' };
+  const ICONS = { steps:'🥾', pushups:'👊', squats:'🦵', crunches:'🔥' };
+  const AMOUNTS = { steps:[1,10,100,1000], pushups:[1,5,20,50], squats:[1,5,20,50], crunches:[1,5,20,50] };
+  const RANK_COLORS = { E:'#7d93ab', D:'#38d4ff', C:'#34e0c0', B:'#5c8bff', A:'#b18aff', S:'#ffd166' };
+  const RANK_TITLES = {
+    E:'E-Rank Hunter',
+    D:'D-Rank Hunter',
+    C:'C-Rank Hunter',
+    B:'B-Rank Hunter',
+    A:'A-Rank Hunter',
+    S:'S-Rank Hunter — Shadow Monarch'
+  };
+  const RANK_FLAVOR = {
+    E:'Every monarch was once E-rank. Begin.',
+    D:'The gate is open. Keep moving forward.',
+    C:'Growth compounds. Stay consistent.',
+    B:'You are outpacing most hunters now.',
+    A:'Elite territory. Few ever reach this far.',
+    S:'You command your own shadow army now.'
+  };
+
+  const DAILY_PENALTY = 400;
+
+  let logs = {};
+  let penalties = {};
+  let lastJudgedDate = null;
+  let profileName = 'Hunter';
+  let activeTab = 'train';
+
+  function keyOf(dt){
+    return dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0');
+  }
+  function todayKey(){ return keyOf(new Date()); }
+  function addDays(key, n){
+    const [y,m,d] = key.split('-').map(Number);
+    const dt = new Date(y, m-1, d);
+    dt.setDate(dt.getDate()+n);
+    return keyOf(dt);
+  }
+  function isDayComplete(entry){
+    if(!entry) return false;
+    const rested = entry.restedTypes || [];
+    for(const t in GOALS){
+      const val = entry[t] || 0;
+      const isRested = rested.includes(t);
+      if (!isRested && val < GOALS[t]) return false;
+    }
+    return true;
+  }
+  function timeUntilMidnight(){
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    const day = now.getDate();
+    const next = new Date(year, month, day + 1, 0, 0, 0, 0);
+    const diff = Math.max(0, next - now);
+    const h = Math.floor(diff / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+    return { text: String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0'), totalMs: diff };
+  }
+  function fmtDate(key){
+    const [y,m,d] = key.split('-').map(Number);
+    const dt = new Date(y, m-1, d);
+    return dt.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+  }
+  function dowOf(key){
+    const [y,m,d] = key.split('-').map(Number);
+    return new Date(y,m-1,d).toLocaleDateString('en-US',{weekday:'short'});
+  }
+
+  function dayXP(key){
+    if(penalties[key]) return -DAILY_PENALTY;
+    const entry = logs[key];
+    if(!entry) return 0;
+    let sum = 0;
+    const rested = entry.restedTypes || [];
+    for(const t in GOALS){
+      const v = entry[t] || 0;
+      if (rested.includes(t)) continue;
+      sum += Math.min(v, GOALS[t]) / GOALS[t] * 100;
+    }
+    return sum;
+  }
+  function totalXP(){
+    const days = new Set([...Object.keys(logs), ...Object.keys(penalties)]);
+    let sum = 0;
+    for(const k of days) sum += dayXP(k);
+    return sum;
+  }
+  function calcLevel(xpRaw){
+    const xp = Math.max(0, xpRaw);
+    let level=1, rem=xp, need=150;
+    while(rem >= need){ rem -= need; level++; need = 150 + (level-1)*25; }
+    return { level, xpIntoLevel:rem, xpForNext:need };
+  }
+  function rankOf(level){
+    if(level>=40) return 'S';
+    if(level>=25) return 'A';
+    if(level>=15) return 'B';
+    if(level>=10) return 'C';
+    if(level>=5) return 'D';
+    return 'E';
+  }
+  function lifetimeTotal(type){
+    let sum=0;
+    for(const k in logs) sum += (logs[k][type]||0);
+    return sum;
+  }
+  function calcStreaks(){
+    const keys = Object.keys(logs).sort();
+    const set = new Set(keys);
+    function fmt(dt){ return dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0'); }
+    let cursor = new Date();
+    if(!set.has(fmt(cursor))) cursor.setDate(cursor.getDate()-1);
+    let current = 0;
+    while(set.has(fmt(cursor))){ current++; cursor.setDate(cursor.getDate()-1); }
+    let longest = 0, run = 0, prev = null;
+    for(const k of keys){
+      const [y,m,d] = k.split('-').map(Number);
+      const dt = new Date(y,m-1,d);
+      if(prev){
+        const diff = Math.round((dt - prev)/86400000);
+        run = diff===1 ? run+1 : 1;
+      } else { run = 1; }
+      longest = Math.max(longest, run);
+      prev = dt;
+    }
+    return { current, longest: Math.max(longest, current) };
+  }
+
+  const STORE_PREFIX = 'awakening-path:';
+  const LocalStore = {
+    get(key){
+      try{
+        const v = localStorage.getItem(STORE_PREFIX+key);
+        return v===null ? null : { value:v };
+      }catch(e){ return null; }
+    },
+    set(key, value){
+      try{ localStorage.setItem(STORE_PREFIX+key, value); return { value }; }
+      catch(e){ console.error('local save failed', e); return null; }
+    }
+  };
+
+  async function loadData(){
+    try{
+      const l = LocalStore.get('logs');
+      logs = l && l.value ? JSON.parse(l.value) : {};
+    }catch(e){ logs = {}; }
+    try{
+      const p = LocalStore.get('profile');
+      profileName = (p && p.value) ? (JSON.parse(p.value).name || 'Hunter') : 'Hunter';
+    }catch(e){ profileName = 'Hunter'; }
+    try{
+      const pen = LocalStore.get('penalties');
+      const parsed = pen && pen.value ? JSON.parse(pen.value) : {};
+      penalties = parsed.penalties || {};
+      lastJudgedDate = parsed.lastJudgedDate || null;
+    }catch(e){ penalties = {}; lastJudgedDate = null; }
+  }
+  async function saveLogs(){
+    LocalStore.set('logs', JSON.stringify(logs));
+  }
+  async function saveProfile(){
+    LocalStore.set('profile', JSON.stringify({name:profileName}));
+  }
+  async function savePenalties(){
+    LocalStore.set('penalties', JSON.stringify({penalties, lastJudgedDate}));
+  }
+
+  async function judgeDays(){
+    const today = todayKey();
+    if(lastJudgedDate === null){
+      lastJudgedDate = addDays(today, -1);
+      await savePenalties();
+      return false;
+    }
+    if(lastJudgedDate >= today) return false;
+
+    let changed = false;
+    let cursor = addDays(lastJudgedDate, 1);
+    while(cursor < today){
+      if(!isDayComplete(logs[cursor])){
+        penalties[cursor] = true;
+        changed = true;
+      }
+      cursor = addDays(cursor, 1);
+    }
+    lastJudgedDate = addDays(today, -1);
+    await savePenalties();
+    return changed;
+  }
+
+  function sysPanel(inner, cls){
+    return '<div class="sys-panel '+(cls||'')+'">'+
+      '<span class="br br-tl"></span><span class="br br-tr"></span><span class="br br-bl"></span><span class="br br-br"></span>'+
+      inner+'</div>';
+  }
+  function toast(msg, cls){
+    const wrap = document.getElementById('toast-wrap');
+    const el = document.createElement('div');
+    el.className = 'toast '+(cls||'');
+    el.textContent = msg;
+    wrap.appendChild(el);
+    setTimeout(()=>el.remove(), 2500);
+  }
+  function showLevelUp(level, rank, rankChanged){
+    const ov = document.getElementById('levelup-overlay');
+    document.getElementById('lu-text').textContent = rankChanged ? 'RANK UP' : 'LEVEL UP';
+    document.getElementById('lu-sub').textContent = rankChanged
+      ? (RANK_TITLES[rank]) : ('LEVEL '+level+' REACHED');
+    ov.classList.add('show');
+    setTimeout(()=>ov.classList.remove('show'), 1800);
+  }
+
+  function updateHud(){
+    const lv = calcLevel(totalXP());
+    const rk = rankOf(lv.level);
+    document.getElementById('hud-lvl').textContent = lv.level;
+    document.getElementById('hud-rank').textContent = rk;
+    document.getElementById('hud-rank').style.color = RANK_COLORS[rk];
+  }
+
+  function renderTrain(){
+    const t = todayKey();
+    const entry = logs[t] || {};
+    let cards = '';
+    for(const type in GOALS){
+      const val = entry[type] || 0;
+      const goal = GOALS[type];
+      const pct = Math.min(100, Math.round(val/goal*100));
+      const done = val >= goal;
+      const inner =
+        '<div class="qhead"><div class="qname">'+LABELS[type]+
+          (done ? '<span class="cleared-tag">CLEARED</span>' : '')+
+        '</div><div class="qnum">'+val.toLocaleString()+' <span class="goal">/ '+goal.toLocaleString()+'</span></div></div>'+
+        '<div class="bar-track"><div class="bar-fill'+(done?' done':'')+'" style="width:'+pct+'%"></div></div>'+
+        '<div class="btn-row">'+
+          '<button class="add-btn sub-btn" data-type="'+type+'" data-amt="-1">-1</button>'+
+          '<button class="add-btn rest-btn" data-type="'+type+'" data-action="rest">🛌 Rest</button>'+
+          AMOUNTS[type].map(a=>'<button class="add-btn" data-type="'+type+'" data-amt="'+a+'">+'+a.toLocaleString()+'</button>').join('')+
+        '</div>';
+      cards += sysPanel(inner, 'quest-card');
+    }
+    return '<h1 class="page-title centered">Daily Quest</h1><div class="train-grid">'+cards+'</div>'+
+      '<div class="penalty-warning">Warning: failing to complete the daily task will result in a punishment.</div>';
+  }
+
+  function renderLogs(){
+    const keys = Array.from(new Set([...Object.keys(logs), ...Object.keys(penalties)])).sort().reverse();
+    if(keys.length===0){
+      return '<h1 class="page-title">Mission Log</h1>'+sysPanel(
+        '<div class="empty-msg"><span class="tag">[ NO RECORDS FOUND ]</span>Complete today\'s training to begin your log.</div>'
+      );
+    }
+    let out = '<h1 class="page-title">Mission Log</h1>';
+    for(const k of keys){
+      const entry = logs[k] || {};
+      const failed = !!penalties[k];
+      const xp = Math.round(dayXP(k));
+      let items = '';
+      for(const type in GOALS){
+        const val = entry[type]||0;
+        const done = val >= GOALS[type];
+        items += '<div class="log-item'+(done?' done':'')+'"><span>'+LABELS[type]+'</span><span class="val">'+val.toLocaleString()+'</span></div>';
+      }
+      out += sysPanel(
+        '<div class="ldate">'+fmtDate(k)+' <span class="dow">'+dowOf(k)+'</span><span class="xp'+(failed?' penalty':'')+'">'+(xp>=0?'+':'')+xp+' XP</span></div>'+
+        (failed ? '<div class="fail-tag">QUEST FAILED — MIDNIGHT DEADLINE MISSED</div>' : '')+
+        '<div class="log-grid">'+items+'</div>',
+        'log-day'
+      );
+    }
+    return out;
+  }
+
+  function renderProfile(){
+    const xp = totalXP();
+    const lv = calcLevel(xp);
+    const rk = rankOf(lv.level);
+    const streaks = calcStreaks();
+    const pct = Math.round(lv.xpIntoLevel/lv.xpForNext*100);
+    const top =
+      '<div class="profile-top">'+
+        '<div class="rank-badge" style="background:radial-gradient(circle,'+RANK_COLORS[rk]+'33,'+RANK_COLORS[rk]+'11);border:2px solid '+RANK_COLORS[rk]+';color:'+RANK_COLORS[rk]+';box-shadow:0 0 30px '+RANK_COLORS[rk]+'55;">'+rk+'</div>'+
+        '<div class="player-name" id="player-name">'+escapeHtml(profileName)+'</div>'+
+        '<div class="rank-title">'+RANK_TITLES[rk]+'</div>'+
+        '<div class="xp-block"><div class="lvl-row"><span>LEVEL <b>'+lv.level+'</b></span><span>'+Math.round(lv.xpIntoLevel)+' / '+lv.xpForNext+' XP</span></div>'+
+        '<div class="bar-track"><div class="bar-fill" style="width:'+pct+'%"></div></div></div>'+
+        '<div class="flavor">"'+RANK_FLAVOR[rk]+'"</div>'+
+      '</div>';
+
+    const stats = sysPanel(
+      '<div class="stat-grid">'+
+        '<div class="stat-box"><div class="sv">'+lifetimeTotal('steps').toLocaleString()+'</div><div class="sl">TOTAL STEPS</div></div>'+
+        '<div class="stat-box"><div class="sv">'+lifetimeTotal('pushups').toLocaleString()+'</div><div class="sl">TOTAL PUSH-UPS</div></div>'+
+        '<div class="stat-box"><div class="sv">'+lifetimeTotal('squats').toLocaleString()+'</div><div class="sl">TOTAL SQUATS</div></div>'+
+        '<div class="stat-box"><div class="sv">'+lifetimeTotal('crunches').toLocaleString()+'</div><div class="sl">TOTAL CRUNCHES</div></div>'+
+        '<div class="stat-box"><div class="sv">'+Object.keys(logs).length+'</div><div class="sl">DAYS TRAINED</div></div>'+
+        '<div class="stat-box"><div class="sv">'+streaks.current+'</div><div class="sl">CURRENT STREAK</div></div>'+
+        '<div class="stat-box"><div class="sv">'+streaks.longest+'</div><div class="sl">LONGEST STREAK</div></div>'+
+        '<div class="stat-box"><div class="sv">'+Math.round(xp).toLocaleString()+'</div><div class="sl">TOTAL XP</div></div>'+
+      '</div>'
+    );
+
+    const reset = '<button class="reset-btn" id="reset-btn">RESET ALL DATA</button>';
+    return '<h1 class="page-title">Hunter Profile</h1>'+top+stats+reset;
+  }
+
+  function render(){
+    const app = document.getElementById('app-content');
+    if(activeTab==='train') app.innerHTML = renderTrain();
+    else if(activeTab==='logs') app.innerHTML = renderLogs();
+    else app.innerHTML = renderProfile();
+
+    document.querySelectorAll('.nav-btn').forEach(b=>{
+      b.classList.toggle('active', b.dataset.tab===activeTab);
+    });
+    updateHud();
+    attachHandlers();
+  }
+
+  function attachHandlers(){
+    document.querySelectorAll('.add-btn').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const action = btn.dataset.action || 'add';
+        if (action === 'rest') {
+          handleAdd(btn.dataset.type, 0, 'rest');
+        } else {
+          handleAdd(btn.dataset.type, parseInt(btn.dataset.amt,10), 'add');
+        }
+      });
+    });
+    const pname = document.getElementById('player-name');
+    if(pname) pname.addEventListener('click', enterNameEditMode);
+    const resetBtn = document.getElementById('reset-btn');
+    if(resetBtn) resetBtn.addEventListener('click', handleResetClick);
+  }
+
+  async function handleAdd(type, amt, action = 'add') {
+    const t = todayKey();
+    if(!logs[t]) logs[t] = { steps:0, pushups:0, squats:0, crunches:0 };
+    if(!logs[t].restedTypes) logs[t].restedTypes = [];
+
+    const goal = GOALS[type];
+    const prevVal = logs[t][type] || 0;
+    const xpBefore = totalXP();
+    const lvBefore = calcLevel(xpBefore).level;
+    const isCurrentlyRested = logs[t].restedTypes.includes(type);
+
+    if (action === 'rest') {
+      if (isCurrentlyRested) {
+        // UNDO: Rest was active – set back to 0
+        logs[t][type] = 0;
+        logs[t].restedTypes = logs[t].restedTypes.filter(t => t !== type);
+        await saveLogs();
+        toast('↩️ Undo rest! '+LABELS[type]+' reverted to 0', 'clear');
+        render();
+        return;
+      } else {
+        // ACTIVATE REST: set to goal, mark as rested
+        logs[t][type] = goal;
+        if (!logs[t].restedTypes.includes(type)) {
+          logs[t].restedTypes.push(type);
+        }
+        await saveLogs();
+        toast('🛌 Rest day! '+LABELS[type]+' cleared (0 XP)', 'clear');
+        render();
+        return;
+      }
+    }
+
+    // Normal add/subtract: if currently rested, ignore any manual change
+    if (isCurrentlyRested) {
+      toast('⛔ '+LABELS[type]+' is on rest – click Rest again to undo', 'clear');
+      return;
+    }
+
+    // Normal add/subtract logic with cap
+    let newVal = prevVal + amt;
+    if (newVal > goal) newVal = goal;
+    if (newVal < 0) newVal = 0;
+
+    // If the value didn't actually change, just show a toast and return (no XP, no log)
+    if (newVal === prevVal) {
+      toast('⏳ Already at limit for '+LABELS[type], '');
+      return;
+    }
+
+    logs[t][type] = newVal;
+    await saveLogs();
+
+    const xpAfter = totalXP();
+    const lvAfter = calcLevel(xpAfter).level;
+    const deltaXP = Math.round(xpAfter - xpBefore);
+    const amtLabel = (amt > 0 ? '+' : '') + amt;
+    const xpLabel = (deltaXP >= 0 ? '+' : '') + deltaXP;
+
+    toast(amtLabel+' '+LABELS[type]+'  ·  '+xpLabel+' XP');
+
+    if(prevVal < goal && logs[t][type] >= goal){
+      setTimeout(()=>toast('DAILY QUEST CLEAR — '+LABELS[type], 'clear'), 260);
+    }
+    if(lvAfter > lvBefore){
+      const rkBefore = rankOf(lvBefore);
+      const rkAfter = rankOf(lvAfter);
+      setTimeout(()=>showLevelUp(lvAfter, rkAfter, rkAfter!==rkBefore), 550);
+    }
+    render();
+  }
+
+  function escapeHtml(str){
+    return String(str)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+
+  function enterNameEditMode(){
+    const el = document.getElementById('player-name');
+    if(!el) return;
+    const current = profileName;
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.id = 'player-name-input';
+    input.className = 'name-input';
+    input.maxLength = 24;
+    input.value = current;
+    el.replaceWith(input);
+    input.focus();
+    input.select();
+
+    let committed = false;
+    const commit = async ()=>{
+      if(committed) return;
+      committed = true;
+      const val = input.value.trim().slice(0,24) || current;
+      profileName = val;
+      await saveProfile();
+      render();
+    };
+    input.addEventListener('keydown', (e)=>{
+      if(e.key==='Enter'){ e.preventDefault(); commit(); }
+      else if(e.key==='Escape'){ committed = true; render(); }
+    });
+    input.addEventListener('blur', commit);
+  }
+
+  let resetArmed = false;
+  let resetArmTimeout = null;
+  function handleResetClick(){
+    const btn = document.getElementById('reset-btn');
+    if(!btn) return;
+    if(!resetArmed){
+      resetArmed = true;
+      btn.textContent = 'TAP AGAIN TO CONFIRM';
+      btn.classList.add('armed');
+      resetArmTimeout = setTimeout(()=>{
+        resetArmed = false;
+        if(btn){ btn.textContent = 'RESET ALL DATA'; btn.classList.remove('armed'); }
+      }, 4000);
+    } else {
+      clearTimeout(resetArmTimeout);
+      resetArmed = false;
+      resetAll();
+    }
+  }
+
+  async function resetAll(){
+    logs = {};
+    profileName = 'Hunter';
+    penalties = {};
+    lastJudgedDate = addDays(todayKey(), -1);
+    await saveLogs();
+    await saveProfile();
+    await savePenalties();
+    render();
+  }
+
+  document.querySelectorAll('.nav-btn').forEach(b=>{
+    b.addEventListener('click', ()=>{ activeTab = b.dataset.tab; render(); });
+  });
+
+  async function init(){
+    await loadData();
+    await judgeDays();
+    render();
+  }
+
+  setInterval(async ()=>{
+    const failedBefore = new Set(Object.keys(penalties));
+    const changed = await judgeDays();
+    if(changed){
+      const newlyFailed = Object.keys(penalties).filter(k=>!failedBefore.has(k));
+      if(newlyFailed.length){
+        toast('MIDNIGHT DEADLINE MISSED — DAILY QUEST FAILED  ·  -'+DAILY_PENALTY+' XP', 'clear');
+      }
+      render();
+    } else if(document.getElementById('hud-lvl')){
+      updateHud();
+    }
+  }, 60000);
+
+  function tickClock(){
+    const clockEl = document.getElementById('day-timer-clock');
+    if(!clockEl) return;
+    const timer = timeUntilMidnight();
+    clockEl.textContent = timer.text;
+    clockEl.classList.toggle('urgent', timer.totalMs < 3600000);
+  }
+  tickClock();
+  setInterval(tickClock, 1000);
+
+  init();
+})();
+</script>
+</body>
+</html>
