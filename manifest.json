@@ -15,6 +15,13 @@
       "label": "Daily Training View"
     },
     {
+      "src": "Info.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "platform": "android",
+      "label": "Daily Training View"
+    },
+    {
       "src": "Logs.png",
       "sizes": "1080x1920",
       "type": "image/png",
