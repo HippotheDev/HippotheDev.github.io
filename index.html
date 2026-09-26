@@ -1,557 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Awakening">
-<meta name="theme-color" content="#0a0a0f">
-<meta name="format-detection" content="telephone=no">
-<link rel="apple-touch-icon" href="icon-512.png">
-<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
-<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
-<link rel="manifest" href="manifest.json">
-<title>Awakening Path</title>
-<meta name="application-name" content="Awakening">
-<meta name="apple-mobile-web-app-title" content="Awakening">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
-<script>
-  (function(){
-    try{
-      var t = localStorage.getItem('awakening-path:theme');
-      document.documentElement.setAttribute('data-theme', t === 'light' ? 'light' : 'dark');
-    }catch(e){ document.documentElement.setAttribute('data-theme', 'dark'); }
-  })();
-</script>
-<style>
-  /* --- CYBERPUNK 2077 THEME --- */
-  :root, [data-theme="dark"] {
-    --bg: #0a0a0f;
-    --bg2: #12121f;
-    --panel: rgba(10, 10, 15, 0.88);
-    --panel2: rgba(18, 18, 31, 0.92);
-    --line: rgba(0, 240, 255, 0.5);
-    --line-dim: rgba(0, 240, 255, 0.2);
-    --accent: #00f0ff;
-    --accent-glow: rgba(0, 240, 255, 0.7);
-    --accent-soft: rgba(0, 240, 255, 0.08);
-    --magenta: #ff2bd6;
-    --magenta-glow: rgba(255, 43, 214, 0.6);
-    --gold: #ffd700;
-    --gold-glow: rgba(255, 215, 0, 0.6);
-    --text: #e8f0f8;
-    --text-dim: #7f8fa6;
-    --danger: #ff0055;
-    --danger-glow: rgba(255, 0, 85, 0.6);
-    --success: #00ff66;
-    --header-bg: rgba(10, 10, 15, 0.9);
-    --bottom-bg: rgba(10, 10, 15, 0.95);
-    --bg-radial: radial-gradient(circle at 30% 10%, #1a1a2e 0%, #0a0a0f 70%);
-    --shadow-main: 0 8px 32px rgba(0, 0, 0, 0.9);
-    --overlay-bg: rgba(0, 0, 0, 0.85);
-    --progress-track: #1a1a2e;
-    --progress-fill-start: var(--accent);
-    --progress-fill-end: var(--magenta);
-    --progress-glow: var(--accent-glow);
-    --panel-clip: polygon(0 12px, 12px 0, calc(100% - 12px) 0, 100% 12px, 100% calc(100% - 12px), calc(100% - 12px) 100%, 12px 100%, 0 calc(100% - 12px));
-    --panel-clip-lg: polygon(0 20px, 20px 0, calc(100% - 20px) 0, 100% 20px, 100% calc(100% - 20px), calc(100% - 20px) 100%, 20px 100%, 0 calc(100% - 20px));
-  }
-
-  [data-theme="light"] {
-    --bg: #eef2f7;
-    --bg2: #d8e0ea;
-    --panel: rgba(255, 255, 255, 0.82);
-    --panel2: rgba(255, 255, 255, 0.95);
-    --line: rgba(0, 120, 140, 0.5);
-    --line-dim: rgba(0, 120, 140, 0.2);
-    --accent: #007a8a;
-    --accent-glow: rgba(0, 120, 140, 0.5);
-    --accent-soft: rgba(0, 120, 140, 0.08);
-    --magenta: #b82b9f;
-    --magenta-glow: rgba(184, 43, 159, 0.4);
-    --gold: #b8860b;
-    --gold-glow: rgba(184, 134, 11, 0.4);
-    --text: #0e1419;
-    --text-dim: #5c6b7a;
-    --danger: #cc0044;
-    --danger-glow: rgba(204, 0, 68, 0.4);
-    --header-bg: rgba(255, 255, 255, 0.92);
-    --bottom-bg: rgba(255, 255, 255, 0.95);
-    --bg-radial: radial-gradient(circle at 30% 10%, #dce4ef 0%, #eef2f7 70%);
-    --shadow-main: 0 8px 32px rgba(0, 0, 0, 0.08);
-    --overlay-bg: rgba(200, 210, 230, 0.85);
-    --progress-track: #dce4ef;
-    --progress-fill-start: var(--accent);
-    --progress-fill-end: var(--magenta);
-    --progress-glow: var(--accent-glow);
-  }
-
-  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  html, body { margin: 0; padding: 0; background-color: var(--bg); color: var(--text); }
-
-  body {
-    background: var(--bg-radial);
-    font-family: 'Rajdhani', sans-serif;
-    min-height: 100vh;
-    overflow-x: hidden;
-    position: relative;
-  }
-
-  /* --- CYBERPUNK AMBIENT: grid overlay + scanline --- */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    background:
-      linear-gradient(rgba(0, 240, 255, 0.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0, 240, 255, 0.04) 1px, transparent 1px);
-    background-size: 50px 50px;
-    -webkit-mask-image: radial-gradient(circle at 50% 20%, #000 0%, rgba(0,0,0,0.3) 50%, transparent 80%);
-    mask-image: radial-gradient(circle at 50% 20%, #000 0%, rgba(0,0,0,0.3) 50%, transparent 80%);
-  }
-
-  body::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    background: repeating-linear-gradient(0deg,
-      transparent 0px,
-      transparent 3px,
-      rgba(0, 240, 255, 0.02) 3px,
-      rgba(0, 240, 255, 0.02) 4px);
-  }
-
-  #root { position: relative; z-index: 1; max-width: 720px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; padding-bottom: 120px; }
-
-  /* --- Header --- */
-  header.hud {
-    position: sticky; top: 0; z-index: 20;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 14px 20px;
-    background: var(--header-bg);
-    backdrop-filter: blur(16px);
-    border-bottom: 2px solid var(--line);
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
-  }
-  .logo {
-    font-family: 'Orbitron', sans-serif; font-weight: 900; letter-spacing: 0.15em;
-    font-size: 16px; color: var(--accent); text-shadow: 0 0 15px var(--accent-glow);
-    display: flex; flex-direction: column; line-height: 1.1;
-  }
-  .logo span {
-    font-size: 9px; letter-spacing: 0.3em; color: var(--text-dim);
-    text-shadow: none; font-weight: 400;
-  }
-  .hud-chip {
-    display: flex; align-items: center; gap: 8px;
-    font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-dim);
-    border: 1px solid var(--line); padding: 4px 12px;
-    background: var(--accent-soft);
-    box-shadow: 0 0 12px var(--accent-glow);
-    clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px);
-  }
-  .hud-chip b { color: var(--accent); font-family: 'Orbitron', sans-serif; font-size: 13px; letter-spacing: 0.05em; text-shadow: 0 0 8px var(--accent-glow); }
-
-  main { flex: 1; padding: 20px 16px 8px; touch-action: pan-y; position: relative; }
-
-  /* --- Panels --- */
-  .sys-panel-wrapper {
-    position: relative;
-    padding: 2px;
-    margin-bottom: 18px;
-    background: var(--line);
-    clip-path: var(--panel-clip);
-    box-shadow: 0 0 20px var(--accent-glow);
-    filter: drop-shadow(0 0 15px var(--accent-glow));
-  }
-  .sys-panel {
-    position: relative;
-    background: var(--panel);
-    backdrop-filter: blur(8px);
-    padding: 20px;
-    clip-path: var(--panel-clip);
-    border: 1px solid transparent;
-  }
-  .sys-panel::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    clip-path: var(--panel-clip);
-    background: linear-gradient(135deg, var(--line) 0%, transparent 40%, transparent 60%, var(--line) 100%);
-    opacity: 0.2;
-  }
-  .br { display: none; }
-
-  h1.page-title {
-    font-family: 'Orbitron', sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 0.3em;
-    color: var(--text); margin: 4px 0 18px; text-transform: uppercase; display: flex; align-items: center; gap: 12px;
-    text-shadow: 0 0 15px var(--accent-glow);
-  }
-  h1.page-title::before { content: ''; width: 6px; height: 20px; background: var(--accent); box-shadow: 0 0 20px var(--accent); }
-  h1.page-title.centered { justify-content: center; }
-  h1.page-title.centered::before { display: none; }
-
-  /* --- Enhanced Warning Glow --- */
-  .penalty-warning {
-    display: flex; align-items: center; justify-content: center; gap: 10px;
-    margin-top: 28px; margin-bottom: 16px; padding: 14px 18px;
-    border: 1px solid var(--danger);
-    background: rgba(255, 0, 85, 0.1);
-    font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.05em; color: var(--danger);
-    text-align: center; text-transform: uppercase; font-weight: 700;
-    box-shadow: 0 0 40px var(--danger-glow), inset 0 0 20px var(--danger-glow);
-    clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px);
-    animation: dangerPulse 2.5s ease-in-out infinite;
-  }
-  @keyframes dangerPulse {
-    0%, 100% { box-shadow: 0 0 30px var(--danger-glow), inset 0 0 15px var(--danger-glow); }
-    50% { box-shadow: 0 0 60px var(--danger-glow), inset 0 0 30px var(--danger-glow); }
-  }
-
-  .train-grid .sys-panel-wrapper,
-  .train-grid .sys-panel {
-    clip-path: var(--panel-clip-lg);
-  }
-
-  .quest-card .qhead { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-  .qhead .qname { font-family: 'Orbitron', sans-serif; font-size: 14px; font-weight: 700; letter-spacing: 0.15em; color: var(--text); display: flex; align-items: center; gap: 10px; }
-  .qhead .qnum { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 700; color: var(--accent); text-shadow: 0 0 10px var(--accent-glow); }
-  .qhead .qnum .goal { color: var(--text-dim); font-weight: 400; }
-
-  .bar-track {
-    height: 12px; background: var(--progress-track); border: 1px solid var(--line-dim);
-    position: relative; overflow: hidden; margin-bottom: 16px;
-    clip-path: polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%);
-    box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
-  }
-  .bar-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--progress-fill-start), var(--progress-fill-end));
-    box-shadow: 0 0 20px var(--progress-glow);
-    transition: width 0.3s ease;
-  }
-  .bar-fill.done {
-    background: linear-gradient(90deg, #ffae00, var(--gold));
-    box-shadow: 0 0 25px var(--gold-glow);
-  }
-
-  /* Buttons – cyberpunk style */
-  .btn-container { display: flex; flex-direction: column; gap: 6px; }
-  .btn-row { display: grid; gap: 6px; }
-  .btn-row.top-row, .btn-row.bottom-row { grid-template-columns: repeat(3, 1fr); }
-
-  .add-btn {
-    font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 12px;
-    background: var(--accent-soft); border: 1px solid var(--line); color: var(--accent);
-    padding: 10px 0; cursor: pointer; letter-spacing: 0.05em;
-    clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
-    text-align: center;
-    transition: background 0.15s, color 0.15s, box-shadow 0.15s;
-    box-shadow: 0 0 8px var(--accent-soft);
-  }
-  .add-btn:hover { background: var(--accent); color: var(--bg); box-shadow: 0 0 20px var(--accent-glow); }
-  .sub-btn { background: rgba(255, 0, 85, 0.1); border-color: var(--danger); color: var(--danger); }
-  .sub-btn:hover { background: var(--danger); color: #fff; box-shadow: 0 0 20px var(--danger-glow); }
-  .rest-btn { background: rgba(255, 215, 0, 0.08); border-color: var(--gold); color: var(--gold); }
-  .rest-btn:hover { background: var(--gold); color: #000; box-shadow: 0 0 20px var(--gold-glow); }
-
-  .cleared-tag {
-    font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.12em; color: var(--gold);
-    border: 1px solid var(--gold); background: rgba(255, 215, 0, 0.15); padding: 2px 8px; margin-left: 8px;
-    box-shadow: 0 0 12px var(--gold-glow);
-  }
-
-  /* --- Daily Quest Complete Popup (overlay on TRAIN page) --- */
-  .daily-complete-popup {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    pointer-events: none;
-    z-index: 10;
-    padding: 20px;
-  }
-  .daily-complete-popup > div {
-    background: var(--panel);
-    border: 2px solid var(--gold);
-    box-shadow: 0 0 60px var(--gold-glow), inset 0 0 40px var(--gold-glow);
-    padding: 40px 30px;
-    clip-path: var(--panel-clip-lg);
-    text-align: center;
-    width: 100%;
-    max-width: 560px;
-    pointer-events: none;
-    animation: completePulse 3s ease-in-out infinite;
-  }
-  @keyframes completePulse {
-    0%, 100% { box-shadow: 0 0 40px var(--gold-glow), inset 0 0 20px var(--gold-glow); }
-    50% { box-shadow: 0 0 80px var(--gold-glow), inset 0 0 40px var(--gold-glow); }
-  }
-  .daily-complete-popup .popup-title {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 32px;
-    font-weight: 900;
-    letter-spacing: 0.1em;
-    color: var(--gold);
-    text-shadow: 0 0 30px var(--gold-glow);
-    line-height: 1.2;
-  }
-  .daily-complete-popup .popup-sub {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 18px;
-    color: var(--text);
-    margin-top: 12px;
-    letter-spacing: 0.05em;
-  }
-
-  /* Logs */
-  .log-day { margin-bottom: 16px; }
-  .log-day .ldate { font-family: 'Orbitron', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.12em; color: var(--text); margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; text-shadow: 0 0 8px var(--accent-glow); }
-  .ldate .dow { color: var(--text-dim); font-family: 'JetBrains Mono', monospace; font-weight: 400; font-size: 11px; }
-  .ldate .xp { color: var(--accent); font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; text-shadow: 0 0 12px var(--accent-glow); }
-  .ldate .xp.penalty { color: var(--danger); text-shadow: 0 0 12px var(--danger-glow); }
-
-  .fail-tag {
-    display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; color: var(--danger);
-    border: 1px solid var(--danger); background: rgba(255, 0, 85, 0.15); padding: 4px 10px; margin-bottom: 12px;
-    box-shadow: 0 0 15px var(--danger-glow);
-  }
-
-  .log-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
-  .log-item {
-    display: flex; align-items: center; justify-content: space-between;
-    font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-dim);
-    background: var(--accent-soft); border: 1px solid var(--line-dim); padding: 8px 12px;
-    clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px);
-  }
-  .log-item .val { color: var(--text); font-weight: 700; }
-  .log-item.done, .log-item.rested { border-color: var(--gold); color: var(--gold); }
-  .log-item.done .val, .log-item.rested .val { color: var(--gold); text-shadow: 0 0 8px var(--gold-glow); }
-
-  /* Info */
-  .info-sec-title {
-    font-family: 'Orbitron', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 0.15em;
-    color: var(--accent); margin-bottom: 12px; text-shadow: 0 0 12px var(--accent-glow); text-transform: uppercase;
-  }
-  .info-desc {
-    font-family: 'Rajdhani', sans-serif; font-size: 14px; color: var(--text); line-height: 1.5; margin-bottom: 10px;
-  }
-  .info-rank-table {
-    width: 100%; border-collapse: collapse; font-family: 'JetBrains Mono', monospace; font-size: 11px; margin-top: 8px;
-  }
-  .info-rank-table th {
-    text-align: left; padding: 8px; border-bottom: 1px solid var(--line); color: var(--text-dim); font-weight: 700;
-  }
-  .info-rank-table td {
-    padding: 8px; border-bottom: 1px solid var(--line-dim); color: var(--text);
-  }
-
-  /* Profile */
-  .profile-container .sys-panel-wrapper,
-  .profile-container .sys-panel,
-  .profile-container .stat-item,
-  .profile-container .bar-track { clip-path: none !important; }
-
-  .profile-top { display: flex; flex-direction: column; align-items: stretch; padding: 8px 0 6px; width: 100%; margin-bottom: 8px; }
-  .profile-row { display: flex; align-items: center; gap: 20px; width: 100%; }
-
-  .rank-badge {
-    font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 80px; line-height: 1;
-    color: var(--gold); text-align: center; flex-shrink: 0; min-width: 90px;
-    animation: rankPulse 3s ease-in-out infinite;
-    filter: drop-shadow(0 0 25px var(--gold-glow));
-  }
-  @keyframes rankPulse {
-    0%, 100% { filter: drop-shadow(0 0 25px var(--gold-glow)); }
-    50% { filter: drop-shadow(0 0 45px var(--gold-glow)); }
-  }
-
-  .profile-info { flex: 1; min-width: 0; width: 100%; }
-  .player-name { font-family: 'Orbitron', sans-serif; font-size: 18px; font-weight: 700; letter-spacing: 0.1em; color: var(--text); cursor: pointer; margin-bottom: 4px; text-shadow: 0 0 15px var(--accent-glow); }
-  .player-name::after { content: ' ✎'; color: var(--accent); font-size: 12px; }
-  .name-input {
-    font-family: 'Orbitron', sans-serif; font-size: 18px; font-weight: 700; letter-spacing: 0.1em;
-    color: var(--text); background: transparent; border: none; border-bottom: 2px solid var(--accent);
-    outline: none; padding: 2px 4px; margin-bottom: 4px; max-width: 200px; width: 100%;
-    text-shadow: 0 0 8px var(--accent-glow);
-  }
-  .rank-title { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-dim); margin-bottom: 8px; letter-spacing: 0.05em; text-transform: uppercase; }
-  .xp-block { width: 100%; max-width: 100%; }
-  .xp-block .lvl-row { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-dim); margin-bottom: 6px; }
-  .xp-block .lvl-row b { color: var(--accent); font-weight: 700; }
-
-  .xp-block .bar-track { height: 8px; margin-bottom: 8px; }
-
-  .flavor { font-family: 'Rajdhani', sans-serif; font-size: 13px; color: var(--text-dim); font-style: italic; margin-top: 4px; line-height: 1.4; }
-
-  .stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 6px; }
-  .stat-item { text-align: center; padding: 8px; background: var(--accent-soft); border: 1px solid var(--line-dim); clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px); }
-  .stat-item .sv { font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 700; color: var(--accent); text-shadow: 0 0 12px var(--accent-glow); }
-  .stat-item .sl { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--text-dim); letter-spacing: 0.1em; margin-top: 2px; }
-
-  .graph-container { background: var(--panel2); border: 1px solid var(--line); padding: 14px 10px 10px; margin-top: 12px; box-shadow: 0 0 25px var(--accent-glow); }
-  .graph-title { font-family: 'Orbitron', sans-serif; font-size: 10px; font-weight: 700; color: var(--accent); letter-spacing: 0.15em; margin-bottom: 8px; text-align: center; text-shadow: 0 0 12px var(--accent-glow); }
-  .graph-svg { width: 100%; height: 110px; overflow: visible; }
-  .graph-svg text { font-family: 'JetBrains Mono', monospace; fill: var(--text-dim); }
-
-  .reset-btn {
-    width: 100%; margin-top: 12px; padding: 12px; background: rgba(255, 0, 85, 0.05); border: 1px solid var(--danger);
-    color: var(--danger); font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; letter-spacing: 0.15em; cursor: pointer;
-    clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px);
-    transition: background 0.2s, box-shadow 0.2s;
-  }
-  .reset-btn:hover { background: var(--danger); color: #fff; box-shadow: 0 0 25px var(--danger-glow); }
-  .reset-btn.armed { background: var(--danger); color: #fff; box-shadow: 0 0 30px var(--danger); }
-
-  /* Bottom bar */
-  .bottom-bar {
-    position: fixed; bottom: 0; left: 0; right: 0; z-index: 30;
-    max-width: 720px; margin: 0 auto;
-    background: var(--bottom-bg);
-    backdrop-filter: blur(16px);
-    border-top: 2px solid var(--line);
-    box-shadow: 0 -4px 30px rgba(0,0,0,0.6);
-  }
-  .timer-strip { display: flex; align-items: center; justify-content: center; padding: 8px 0; border-bottom: 1px solid var(--line-dim); }
-  .timer-strip .dt-clock { font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 700; letter-spacing: 0.15em; color: var(--accent); text-shadow: 0 0 20px var(--accent-glow); }
-  .timer-strip .dt-clock.urgent { color: var(--danger); text-shadow: 0 0 20px var(--danger-glow); }
-
-  nav.hud-nav { display: flex; }
-  .nav-btn {
-    flex: 1; text-align: center; padding: 12px 0; background: none; border: none; color: var(--text-dim);
-    font-family: 'Orbitron', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.15em; cursor: pointer;
-    display: flex; flex-direction: column; align-items: center; gap: 4px; position: relative;
-    transition: color 0.2s, text-shadow 0.2s;
-  }
-  .nav-btn .ic { width: 18px; height: 18px; display: inline-flex; color: inherit; }
-  .nav-btn .ic svg { width: 100%; height: 100%; overflow: visible; }
-  .nav-btn.active { color: var(--accent); text-shadow: 0 0 20px var(--accent-glow); }
-  .nav-btn.active .ic { filter: drop-shadow(0 0 8px var(--accent-glow)); }
-  .nav-btn.active::before {
-    content: ''; position: absolute; top: 0; left: 15%; right: 15%; height: 2px;
-    background: var(--accent); box-shadow: 0 0 20px var(--accent);
-  }
-
-  /* Toasts – cyberpunk style */
-  #toast-wrap { position: fixed; top: 20px; left: 0; right: 0; z-index: 100; display: flex; flex-direction: column; align-items: center; gap: 8px; pointer-events: none; }
-  .toast {
-    font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; color: var(--accent);
-    background: var(--panel2); border: 1px solid var(--accent); padding: 12px 24px;
-    max-width: 90%; text-align: center; letter-spacing: 0.05em;
-    box-shadow: 0 0 30px var(--accent-glow);
-    clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
-    opacity: 0;
-  }
-  .toast.clear { color: var(--gold); border-color: var(--gold); box-shadow: 0 0 30px var(--gold-glow); }
-
-  /* Level-up overlay */
-  #levelup-overlay {
-    position: fixed; inset: 0; z-index: 200; display: flex; align-items: center; justify-content: center;
-    background: var(--overlay-bg); backdrop-filter: blur(12px); opacity: 0; pointer-events: none;
-    transition: opacity 0.2s;
-  }
-  #levelup-overlay.show { opacity: 1; pointer-events: auto; }
-  .lu-box {
-    text-align: center; font-family: 'Orbitron', sans-serif;
-    background: var(--panel); border: 2px solid var(--gold); padding: 40px; box-shadow: 0 0 80px var(--gold-glow);
-    clip-path: polygon(16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%, 0 16px);
-  }
-  .lu-box .lu-label { font-size: 12px; font-weight: 700; letter-spacing: 0.4em; color: var(--accent); margin-bottom: 12px; text-shadow: 0 0 15px var(--accent-glow); }
-  .lu-box .lu-big { font-size: 44px; font-weight: 900; color: var(--gold); text-shadow: 0 0 40px var(--gold-glow); letter-spacing: 0.1em; }
-  .lu-box .lu-sub { margin-top: 14px; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--text); letter-spacing: 0.08em; }
-
-  /* Theme toggle */
-  .theme-toggle { display: flex; gap: 8px; margin-top: 4px; }
-  .theme-btn {
-    flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;
-    font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 12px; letter-spacing: 0.1em;
-    background: var(--accent-soft); border: 1px solid var(--line); color: var(--text-dim);
-    padding: 12px 0; cursor: pointer; text-transform: uppercase;
-    clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
-    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
-  }
-  .theme-btn .ic { width: 15px; height: 15px; display: inline-flex; }
-  .theme-btn .ic svg { width: 100%; height: 100%; }
-  .theme-btn:hover { border-color: var(--accent); color: var(--text); }
-  .theme-btn.active { background: var(--accent); color: var(--bg); border-color: var(--accent); box-shadow: 0 0 20px var(--accent-glow); }
-
-  /* Data export / import */
-  .data-io-btn {
-    flex: 1;
-    padding: 8px 16px;
-    font-family: 'JetBrains Mono', monospace;
-    font-weight: 700;
-    font-size: 12px;
-    background: var(--accent-soft);
-    border: 1px solid var(--line);
-    color: var(--accent);
-    cursor: pointer;
-    clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
-    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
-  }
-  .data-io-btn:hover {
-    background: var(--accent);
-    color: var(--bg);
-    box-shadow: 0 0 20px var(--accent-glow);
-  }
-  .data-io-status {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    color: var(--text-dim);
-    margin-top: 6px;
-  }
-
-  @media (min-width: 600px) {
-    .train-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .train-grid .sys-panel-wrapper { margin-bottom: 0; }
-  }
-</style>
-</head>
-<body>
-<div id="root">
-  <header class="hud">
-    <div class="logo">AWAKENING PATH<span>TRAINING SYSTEM</span></div>
-    <div class="hud-chip" id="hud-chip">Rank <b id="hud-rank">E</b> · Lvl <b id="hud-lvl">1</b></div>
-  </header>
-  <main id="app-content"></main>
-  <div class="bottom-bar">
-    <div class="timer-strip" id="timer-strip">
-      <span class="dt-clock" id="day-timer-clock">00:00:00</span>
-    </div>
-    <nav class="hud-nav">
-      <button class="nav-btn" data-tab="train"><span class="ic"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.6"/><path d="M12 1.5v4M12 18.5v4M1.5 12h4M18.5 12h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>TRAIN</button>
-      <button class="nav-btn" data-tab="logs"><span class="ic"><svg viewBox="0 0 24 24" fill="none"><path d="M4 4.5h16M4 4.5v15h16v-15" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M7.5 9h9M7.5 13h9M7.5 17h5.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>LOGS</button>
-      <button class="nav-btn" data-tab="profile"><span class="ic"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2.5 20.5 6v6.2c0 5-3.6 8.4-8.5 10.3-4.9-1.9-8.5-5.3-8.5-10.3V6L12 2.5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="12" cy="10.5" r="2.6" stroke="currentColor" stroke-width="1.6"/><path d="M8 16.5c.7-2 2.2-3 4-3s3.3 1 4 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>PROFILE</button>
-      <button class="nav-btn" data-tab="info"><span class="ic"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2.5 21 7.2v9.6L12 21.5 3 16.8V7.2L12 2.5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="12" cy="8.7" r="1" fill="currentColor"/><path d="M12 11.5v6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>INFO</button>
-    </nav>
-  </div>
-</div>
-<div id="toast-wrap"></div>
-<div id="levelup-overlay"><div class="lu-box">
-  <div class="lu-label">SYSTEM NOTICE</div>
-  <div class="lu-big" id="lu-text">LEVEL UP</div>
-  <div class="lu-sub" id="lu-sub"></div>
-</div></div>
-
 <script>
 (function(){
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js');
   }
 
-  const GOALS = { steps:10000, pushups:100, squats:100, crunches:100 };
-  const LABELS = { steps:'STEPS', pushups:'PUSH-UPS', squats:'SQUATS', crunches:'CRUNCHES' };
-  const AMOUNTS = { steps:[1,10,100,1000], pushups:[1,5,20,50], squats:[1,5,20,50], crunches:[1,5,20,50] };
+  const DAILY_PENALTY = 400;
+  const FIXED_GOALS = { steps: 10000, wrist: 200 };
+  const MODE_GOALS = {
+    pushups: { normal: 60, hard: 100 },
+    squats: { normal: 60, hard: 100 },
+    crunches: { normal: 60, hard: 100 }
+  };
+  const LABELS = { steps:'STEPS', pushups:'PUSH-UPS', squats:'SQUATS', crunches:'CRUNCHES', wrist:'WRIST' };
+  const AMOUNTS = { steps:[1,10,100,1000], pushups:[1,5,20,50], squats:[1,5,20,50], crunches:[1,5,20,50], wrist:[1,5,20,50] };
   const RANK_COLORS = { E:'#7d93ab', D:'#00f0ff', C:'#34e0c0', B:'#5c8bff', A:'#b18aff', S:'#ffd166', SS:'#ff0055', Monarch:'#12153f' };
   const RANK_TITLES = {
     E:'E-Rank Hunter',
@@ -585,14 +46,14 @@
     Monarch: 5.0
   };
 
-  const DAILY_PENALTY = 400;
-
   let logs = {};
   let penalties = {};
   let lastJudgedDate = null;
   let profileName = 'Hunter';
   let activeTab = 'train';
   let theme = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+  let defaultMode = 'normal';
+  let wristStartDate = null;
 
   let touchStartX = 0;
   let touchStartY = 0;
@@ -613,16 +74,58 @@
     dt.setDate(dt.getDate()+n);
     return keyOf(dt);
   }
-  function isDayComplete(entry){
+
+  function isWristActive(dateKey){
+    return wristStartDate && dateKey >= wristStartDate;
+  }
+
+  function getActiveExercises(dateKey){
+    const list = ['steps','pushups','squats','crunches'];
+    if (isWristActive(dateKey)) list.push('wrist');
+    return list;
+  }
+
+  function getModeForDate(dateKey){
+    if (logs[dateKey] && logs[dateKey].mode) return logs[dateKey].mode;
+    if (dateKey < todayKey()) return 'hard';
+    if (logs[dateKey]) return 'hard';
+    return defaultMode;
+  }
+
+  function getGoalForExercise(type, dateKey){
+    if (type === 'steps') return FIXED_GOALS.steps;
+    if (type === 'wrist') return FIXED_GOALS.wrist;
+    const mode = getModeForDate(dateKey);
+    return MODE_GOALS[type][mode];
+  }
+
+  function getMaxXPForExercise(type, dateKey){
+    if (type === 'steps') return 100;
+    if (type === 'wrist') return 100;
+    const mode = getModeForDate(dateKey);
+    return MODE_GOALS[type][mode];
+  }
+
+  function getGoalsForDate(dateKey){
+    const goals = {};
+    for (const type of getActiveExercises(dateKey)) {
+      goals[type] = getGoalForExercise(type, dateKey);
+    }
+    return goals;
+  }
+
+  function isDayComplete(dateKey, entry){
     if(!entry) return false;
     const rested = entry.restedTypes || [];
-    for(const t in GOALS){
+    const goals = getGoalsForDate(dateKey);
+    for(const t in goals){
       const val = entry[t] || 0;
       const isRested = rested.includes(t);
-      if (!isRested && val < GOALS[t]) return false;
+      if (!isRested && val < goals[t]) return false;
     }
     return true;
   }
+
   function timeUntilMidnight(){
     const now = new Date();
     const next = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0, 0);
@@ -647,20 +150,19 @@
     if(!entry) return 0;
     let sum = 0;
     const rested = entry.restedTypes || [];
-    for(const t in GOALS){
-      const v = entry[t] || 0;
-      if (rested.includes(t)) continue;
-      sum += Math.min(v, GOALS[t]) / GOALS[t] * 100;
+    const goals = getGoalsForDate(key);
+    for(const type in goals){
+      const v = entry[type] || 0;
+      if (rested.includes(type)) continue;
+      const goal = goals[type];
+      const maxXP = getMaxXPForExercise(type, key);
+      sum += Math.min(v, goal) / goal * maxXP;
     }
     return sum;
   }
 
   function getMultiplierForRank(rank){ return RANK_MULTIPLIERS[rank] || 1.0; }
 
-  // computeXPTimeline() walks the player's entire day-by-day history, which
-  // gets more expensive the longer the app has been used. It's called
-  // multiple times per render/interaction, so the result is cached and only
-  // recomputed when logs/penalties actually change (see markTimelineDirty).
   let _timelineCache = null;
   let _timelineDirty = true;
   function markTimelineDirty(){ _timelineDirty = true; }
@@ -777,12 +279,25 @@
       penalties = parsed.penalties || {};
       lastJudgedDate = parsed.lastJudgedDate || null;
     }catch(e){ penalties = {}; lastJudgedDate = null; }
+
+    try{
+      const s = LocalStore.get('settings');
+      const parsed = s && s.value ? JSON.parse(s.value) : {};
+      defaultMode = parsed.defaultMode === 'hard' ? 'hard' : 'normal';
+      wristStartDate = parsed.wristStartDate || todayKey();
+    }catch(e){
+      defaultMode = 'normal';
+      wristStartDate = todayKey();
+    }
+    if (!wristStartDate) wristStartDate = todayKey();
+    await saveSettings();
     markTimelineDirty();
   }
 
   async function saveLogs(){ LocalStore.set('logs', JSON.stringify(logs)); markTimelineDirty(); }
   async function saveProfile(){ LocalStore.set('profile', JSON.stringify({name:profileName})); }
   async function savePenalties(){ LocalStore.set('penalties', JSON.stringify({penalties, lastJudgedDate})); markTimelineDirty(); }
+  async function saveSettings(){ LocalStore.set('settings', JSON.stringify({defaultMode, wristStartDate})); markTimelineDirty(); }
 
   async function judgeDays(){
     const today = todayKey();
@@ -796,7 +311,7 @@
     let changed = false;
     let cursor = addDays(lastJudgedDate, 1);
     while(cursor < today){
-      if(!isDayComplete(logs[cursor])){
+      if(!isDayComplete(cursor, logs[cursor])){
         penalties[cursor] = true;
         changed = true;
       }
@@ -867,7 +382,8 @@
       logs,
       penalties,
       lastJudgedDate,
-      profile: { name: profileName }
+      profile: { name: profileName },
+      settings: { defaultMode, wristStartDate }
     };
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -894,9 +410,17 @@
       penalties = parsed.penalties || {};
       lastJudgedDate = parsed.lastJudgedDate || null;
       profileName = (parsed.profile && parsed.profile.name) || 'Hunter';
+      if (parsed.settings) {
+        defaultMode = parsed.settings.defaultMode === 'hard' ? 'hard' : 'normal';
+        wristStartDate = parsed.settings.wristStartDate || todayKey();
+      } else {
+        defaultMode = 'normal';
+        wristStartDate = todayKey();
+      }
       await saveLogs();
       await savePenalties();
       await saveProfile();
+      await saveSettings();
       await judgeDays();
       toast('[ IMPORTED ] Backup restored', 'clear');
       render();
@@ -908,20 +432,25 @@
   function renderTrain(){
     const t = todayKey();
     const entry = logs[t] || {};
+    const active = getActiveExercises(t);
     let cards = '';
-    for(const type in GOALS){
+    for(const type of active){
       const val = entry[type] || 0;
-      const goal = GOALS[type];
+      const goal = getGoalForExercise(type, t);
       const pct = Math.min(100, Math.round(val/goal*100));
       const done = val >= goal;
+      const rested = entry.restedTypes && entry.restedTypes.includes(type);
       
       const amounts = AMOUNTS[type];
       const smallestAmt = amounts[0];
       const largerAmts = amounts.slice(1);
 
+      const statusTag = rested
+        ? '<span class="cleared-tag">RESTED</span>'
+        : (done ? '<span class="cleared-tag">CLEARED</span>' : '');
+
       const inner =
-        '<div class="qhead"><div class="qname">'+LABELS[type]+
-          (done ? '<span class="cleared-tag">CLEARED</span>' : '')+
+        '<div class="qhead"><div class="qname">'+LABELS[type]+ statusTag +
         '</div><div class="qnum">'+val.toLocaleString()+' <span class="goal">/ '+goal.toLocaleString()+'</span></div></div>'+
         '<div class="bar-track"><div class="bar-fill'+(done?' done':'')+'" style="width:'+pct+'%"></div></div>'+
         '<div class="btn-container">'+
@@ -938,7 +467,7 @@
     }
 
     let popup = '';
-    if (isDayComplete(entry)) {
+    if (isDayComplete(t, entry)) {
       popup = `
         <div class="daily-complete-popup">
           <div>
@@ -967,10 +496,12 @@
       const entry = logs[k] || {};
       const failed = !!penalties[k];
       const xp = Math.round(timeline.perDay[k] || 0);
+      const active = getActiveExercises(k);
       let items = '';
-      for(const type in GOALS){
+      for(const type of active){
         const val = entry[type]||0;
-        const done = val >= GOALS[type];
+        const goal = getGoalForExercise(type, k);
+        const done = val >= goal;
         const rested = entry.restedTypes && entry.restedTypes.includes(type);
         let displayVal;
         let cls = 'log-item';
@@ -1070,6 +601,19 @@
       </div>
     `);
 
+    const modePanel = sysPanel(`
+      <div class="info-sec-title">Quest Difficulty</div>
+      <div class="info-desc">Normal mode lowers daily quotas for push-ups, squats, and crunches to 60 and awards proportional XP (max 60 each). Hard mode keeps them at 100 and awards up to 100 XP each. The choice applies to today and becomes locked when the day ends.</div>
+      <div class="theme-toggle">
+        <button class="theme-btn${getModeForDate(todayKey())==='normal' ? ' active' : ''}" data-mode-choice="normal">
+          Normal (60)
+        </button>
+        <button class="theme-btn${getModeForDate(todayKey())==='hard' ? ' active' : ''}" data-mode-choice="hard">
+          Hard (100)
+        </button>
+      </div>
+    `);
+
     const dataPanel = sysPanel(`
       <div class="info-sec-title">Backup Your Data</div>
       <div class="info-desc">All progress lives only on this device. Export a backup file regularly, especially before reinstalling the app or switching devices — a cleared browser/app storage means lost progress with no other recovery.</div>
@@ -1081,7 +625,7 @@
       <div class="data-io-status">Importing a backup replaces your current logs, penalties, and profile name.</div>
     `);
 
-    return '<h1 class="page-title">System Info</h1>' + themePanel + dataPanel + rankPanel + punishmentPanel + restPanel + resetDataPanel;
+    return '<h1 class="page-title">System Info</h1>' + themePanel + modePanel + dataPanel + rankPanel + punishmentPanel + restPanel + resetDataPanel;
   }
 
   function getDynamicLineColor(ratio) {
@@ -1229,6 +773,7 @@
         <div class="stat-item"><div class="sv">${lifetimeTotal('pushups').toLocaleString()}</div><div class="sl">TOTAL PUSH-UPS</div></div>
         <div class="stat-item"><div class="sv">${lifetimeTotal('squats').toLocaleString()}</div><div class="sl">TOTAL SQUATS</div></div>
         <div class="stat-item"><div class="sv">${lifetimeTotal('crunches').toLocaleString()}</div><div class="sl">TOTAL CRUNCHES</div></div>
+        <div class="stat-item"><div class="sv">${lifetimeTotal('wrist').toLocaleString()}</div><div class="sl">TOTAL WRIST</div></div>
         <div class="stat-item"><div class="sv">${Object.keys(logs).length}</div><div class="sl">DAYS TRAINED</div></div>
         <div class="stat-item"><div class="sv">${streaks.current}</div><div class="sl">CURRENT STREAK</div></div>
         <div class="stat-item"><div class="sv">${streaks.longest}</div><div class="sl">LONGEST STREAK</div></div>
@@ -1253,7 +798,7 @@
     if (timerStrip) {
       const today = todayKey();
       const entry = logs[today];
-      if (entry && isDayComplete(entry)) {
+      if (entry && isDayComplete(today, entry)) {
         timerStrip.style.display = 'none';
       } else {
         timerStrip.style.display = 'flex';
@@ -1266,10 +811,6 @@
     updateHud();
   }
 
-  // #app-content's own element never gets replaced by render() (only its
-  // innerHTML does), so a single delegated listener set up once here handles
-  // every click inside it forever — no per-render rebinding of dozens of
-  // buttons on every add/rest/tab-switch.
   function setupDelegatedHandlers(){
     const app = document.getElementById('app-content');
     if(!app) return;
@@ -1285,9 +826,15 @@
 
       const themeBtn = e.target.closest('.theme-btn');
       if (themeBtn) {
-        const choice = themeBtn.dataset.themeChoice;
-        if (choice && choice !== theme) setTheme(choice);
-        return;
+        if (themeBtn.dataset.themeChoice) {
+          const choice = themeBtn.dataset.themeChoice;
+          if (choice && choice !== theme) setTheme(choice);
+          return;
+        }
+        if (themeBtn.dataset.modeChoice) {
+          handleModeChange(themeBtn.dataset.modeChoice);
+          return;
+        }
       }
 
       if (e.target.closest('#player-name')) { enterNameEditMode(); return; }
@@ -1309,12 +856,24 @@
     });
   }
 
+  async function handleModeChange(mode){
+    const t = todayKey();
+    if (!logs[t]) logs[t] = { steps:0, pushups:0, squats:0, crunches:0, wrist:0, restedTypes:[] };
+    if (!logs[t].restedTypes) logs[t].restedTypes = [];
+    logs[t].mode = mode;
+    defaultMode = mode;
+    await saveLogs();
+    await saveSettings();
+    toast('[ MODE ] ' + (mode === 'normal' ? 'Normal (60)' : 'Hard (100)') + ' selected for today', 'clear');
+    render();
+  }
+
   async function handleAdd(type, amt, action = 'add') {
     const t = todayKey();
-    if(!logs[t]) logs[t] = { steps:0, pushups:0, squats:0, crunches:0 };
+    if(!logs[t]) logs[t] = { steps:0, pushups:0, squats:0, crunches:0, wrist:0, restedTypes:[], mode: defaultMode };
     if(!logs[t].restedTypes) logs[t].restedTypes = [];
 
-    const goal = GOALS[type];
+    const goal = getGoalForExercise(type, t);
     const prevVal = logs[t][type] || 0;
     const xpBefore = totalXP();
     const lvBefore = calcLevel(xpBefore).level;
@@ -1437,9 +996,12 @@
     profileName = 'Hunter';
     penalties = {};
     lastJudgedDate = addDays(todayKey(), -1);
+    defaultMode = 'normal';
+    wristStartDate = todayKey();
     await saveLogs();
     await saveProfile();
     await savePenalties();
+    await saveSettings();
     render();
   }
 
@@ -1534,5 +1096,3 @@
   init();
 })();
 </script>
-</body>
-</html>
