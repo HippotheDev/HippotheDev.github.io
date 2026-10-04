@@ -126,8 +126,6 @@
     box-shadow: 0 0 20px var(--progress-glow); transition: width 0.3s ease; }
   .bar-fill.done { background: linear-gradient(90deg, #ffae00, var(--gold)); box-shadow: 0 0 25px var(--gold-glow); }
   .btn-container { display: flex; flex-direction: column; gap: 6px; }
-  .btn-row { display: grid; gap: 6px; }
-  .btn-row.top-row, .btn-row.bottom-row { grid-template-columns: repeat(3, 1fr); }
   .add-btn { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 12px;
     background: var(--accent-soft); border: 1px solid var(--line); color: var(--accent); padding: 10px 0; cursor: pointer;
     letter-spacing: 0.05em; clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
@@ -384,7 +382,6 @@
   [data-theme="retro"] .bar-fill{height:100%;background:var(--accent);box-shadow:none;transition:width .3s ease}
   [data-theme="retro"] .bar-fill.done{background:var(--accent);box-shadow:none}
   [data-theme="retro"] .btn-container{gap:8px}
-  [data-theme="retro"] .btn-row{gap:8px}
   [data-theme="retro"] .add-btn,[data-theme="retro"] .data-io-btn,[data-theme="retro"] .theme-btn{font-family:'Chakra Petch',sans-serif;font-weight:700;font-size:15px;letter-spacing:0;background:var(--accent);color:var(--tag-fg);border:2px solid var(--line);border-radius:3px;padding:10px 0;cursor:pointer;box-shadow:3px 3px 0 var(--shadow-c);clip-path:none;transition:transform .08s,box-shadow .08s}
   [data-theme="retro"] .add-btn:hover{background:var(--accent);color:var(--tag-fg);box-shadow:3px 3px 0 var(--shadow-c)}
   [data-theme="retro"] .sub-btn,[data-theme="retro"] .rest-btn,[data-theme="retro"] .data-io-btn,[data-theme="retro"] .theme-btn{background:var(--panel);color:var(--text)}
@@ -542,6 +539,89 @@
   [data-theme="retro"] .info-sub .info-content { border-top: 2px solid var(--line-dim); padding: 12px 12px 14px; }
   [data-theme="retro"] .info-group > .info-body > .info-body-inner > .info-content { padding: 10px 10px 12px; }
 
+  /* ===== Training Profiles ===== */
+  .profile-bar-wrap { margin-top: 22px; }
+  .profile-bar-label { font-family: 'Orbitron', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--text-dim); margin-bottom: 8px; text-align: center; }
+  .profile-bar { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+  .profile-slot { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+    min-height: 56px; padding: 8px 3px; text-align: center; cursor: pointer; overflow: hidden;
+    background: var(--accent-soft); border: 1px solid var(--line-dim); color: var(--text-dim);
+    font-family: 'JetBrains Mono', monospace;
+    clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px);
+    transition: background .15s, color .15s, border-color .15s, box-shadow .15s; }
+  .profile-slot:hover { border-color: var(--accent); color: var(--text); }
+  .profile-slot.active { background: var(--accent); border-color: var(--accent); color: var(--bg);
+    box-shadow: 0 0 18px var(--accent-glow); }
+  .profile-slot.empty { border-style: dashed; }
+  .profile-slot-name { font-size: 10px; font-weight: 700; max-width: 100%;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .profile-slot-ex { font-size: 8px; opacity: 0.75; }
+  .profile-slot-plus { font-size: 18px; line-height: 1; }
+  .profile-slot-hint { font-size: 8px; opacity: 0.6; }
+  .profile-bar-note { text-align: center; margin-top: 8px; font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; color: var(--text-dim); letter-spacing: 0.05em; }
+  .profile-bar-note b { color: var(--accent); }
+  [data-theme="retro"] .profile-bar-label { font-family: 'Chakra Petch', sans-serif; }
+  [data-theme="retro"] .profile-slot { font-family: 'Chakra Petch', sans-serif;
+    background: var(--panel); border: 2px solid var(--line); border-radius: 3px; clip-path: none; }
+  [data-theme="retro"] .profile-slot.active { background: var(--accent); color: var(--tag-fg); box-shadow: 3px 3px 0 var(--shadow-c); }
+  [data-theme="retro"] .profile-slot-name { font-size: 12px; }
+  [data-theme="retro"] .profile-slot-ex { font-size: 9px; }
+  [data-theme="retro"] .profile-bar-note { font-family: 'Space Mono', monospace; }
+
+  .profile-item { padding: 12px; background: var(--panel2); border: 1px solid var(--line-dim); margin-bottom: 8px;
+    clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px); }
+  .profile-item.active { border-color: var(--accent); box-shadow: 0 0 12px var(--accent-glow); }
+  .profile-item-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+  .profile-item-name { font-family: 'Orbitron', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 0.08em;
+    color: var(--text); }
+  .profile-item-ex { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-dim); margin-top: 4px; word-break: break-word; }
+  .profile-item-btns { display: flex; gap: 6px; flex-shrink: 0; flex-wrap: wrap; }
+  .profile-item-btns button { padding: 5px 9px; font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    font-weight: 700; cursor: pointer; background: var(--accent-soft); border: 1px solid var(--line); color: var(--accent);
+    clip-path: polygon(3px 0, 100% 0, 100% calc(100% - 3px), calc(100% - 3px) 100%, 0 100%, 0 3px); }
+  .profile-item-btns button.danger { background: rgba(255,0,85,0.1); border-color: var(--danger); color: var(--danger); }
+  .profile-item-btns button:hover { background: var(--accent); color: var(--bg); }
+  .profile-item-btns button.danger:hover { background: var(--danger); color: #fff; }
+  [data-theme="retro"] .profile-item { background: var(--panel); border: 2px solid var(--line-dim); border-radius: 3px; clip-path: none; }
+  [data-theme="retro"] .profile-item-name { font-family: 'Chakra Petch', sans-serif; }
+  [data-theme="retro"] .profile-item-btns button { font-family: 'Chakra Petch', sans-serif; border: 2px solid var(--line); border-radius: 2px; clip-path: none; }
+
+  .profile-editor { padding: 12px; background: var(--panel); border: 1px solid var(--line); margin-top: 10px; }
+  .profile-editor > label { display: block; font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); margin: 0 0 6px; }
+  .profile-editor input[type=text] { width: 100%; padding: 8px 10px; font-family: 'JetBrains Mono', monospace;
+    font-size: 13px; color: var(--text); background: var(--panel2); border: 1px solid var(--line);
+    margin-bottom: 14px; outline: none; box-sizing: border-box; }
+  .profile-editor input[type=text]:focus { border-color: var(--accent); }
+  .profile-ex-row { display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    padding: 8px 0; border-bottom: 1px solid var(--line-dim); }
+  .profile-ex-row:last-of-type { border-bottom: none; }
+  .profile-ex-row > label { display: flex; align-items: center; gap: 8px; font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; color: var(--text); cursor: pointer; margin: 0; }
+  .profile-ex-row input[type=checkbox] { accent-color: var(--accent); width: 16px; height: 16px; }
+  .profile-ex-goal { width: 80px; padding: 4px 6px; font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    text-align: center; color: var(--accent); background: var(--panel2); border: 1px solid var(--line-dim); outline: none; }
+  .profile-ex-goal:focus { border-color: var(--accent); }
+  .ex-cat { border: 1px solid var(--line-dim); margin: 0 0 8px; padding: 0 10px; background: var(--accent-soft); }
+  .ex-cat > summary { cursor: pointer; padding: 10px 0; font-family: 'Orbitron', sans-serif; font-size: 11px; font-weight: 700;
+    letter-spacing: 0.15em; color: var(--accent); list-style: none; display: flex; justify-content: space-between; align-items: center; }
+  .ex-cat > summary::-webkit-details-marker { display: none; }
+  .ex-cat > summary::after { content: '+'; margin-left: 8px; }
+  .ex-cat[open] > summary::after { content: '\2212'; }
+  .ex-cat-count { margin-left: auto; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-dim); font-weight: 400; }
+  .ex-cat .profile-ex-row:last-of-type { border-bottom: none; }
+  .profile-editor-actions { display: flex; gap: 8px; margin-top: 12px; }
+  .profile-editor-actions button { flex: 1; padding: 10px; font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    font-weight: 700; letter-spacing: 0.08em; cursor: pointer; background: var(--accent-soft);
+    border: 1px solid var(--line); color: var(--accent);
+    clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px); }
+  .profile-editor-actions button:hover { background: var(--accent); color: var(--bg); }
+  [data-theme="retro"] .profile-editor { border: 2px solid var(--line); }
+  [data-theme="retro"] .profile-editor-actions button { font-family: 'Chakra Petch', sans-serif; font-size: 14px;
+    border: 2px solid var(--line); border-radius: 3px; clip-path: none; box-shadow: 3px 3px 0 var(--shadow-c); }
+
   /* ===== Side menu (replaces the Info tab) ===== */
   .hud-right { display: flex; align-items: center; gap: 8px; }
   .menu-btn { display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 30px; padding: 0; cursor: pointer;
@@ -581,6 +661,7 @@
     [data-theme="retro"] .logo { font-size: 18px; }
     [data-theme="retro"] header.hud { padding-left: 12px; padding-right: 12px; }
   }
+  .stat-grid .stat-item, [data-theme="retro"] .stat-grid .stat-item { text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 </style>
 </head>
 <body>
@@ -617,12 +698,51 @@
   const DAILY_PENALTY = 400;
   const FREEZE_BUDGET_PER_MONTH = 1;
   const BACKUP_INTERVAL_DAYS = 14;
-  const QUEST_WINDOW_HOURS = 48;   // cycle length
-  const FIXED_GOALS = { steps: 10000, wrist: 200 };
-  const MODE_GOALS = { pushups: { normal: 60, hard: 100 }, squats: { normal: 60, hard: 100 }, crunches: { normal: 60, hard: 100 } };
-  const LABELS = { steps:'STEPS', pushups:'PUSH-UPS', squats:'SQUATS', crunches:'CRUNCHES', wrist:'WRIST' };
-  // Default step amounts for the [+] / [−] input row. Persisted per exercise under `stepPrefs`.
-  const STEP_DEFAULTS = { steps: 1000, pushups: 10, squats: 10, crunches: 10, wrist: 5 };
+  const QUEST_WINDOW_HOURS = 48;
+
+  /* ---------- Exercise registry (single source of truth) ----------
+     goal = NORMAL-mode max. Hard mode multiplies goal and XP by 5/3.
+     rep-type exercises ('mode'): XP max = the max the user inputs (goal). */
+  const HARD_MULT = 5 / 3;   // hard mode = x5/3 of normal
+  const BASE_REPS = 60;
+  const EXERCISE_CATEGORIES = [
+    { id:'basics', label:'STEPS' },
+    { id:'arms',   label:'ARMS' },
+    { id:'back',   label:'BACK' },
+    { id:'chest',  label:'PECTORAL' },
+    { id:'abs',    label:'ABDOMINAL' },
+    { id:'legs',   label:'LEGS' }
+  ];
+  const EXERCISE_REGISTRY = {
+    steps:    { label:'STEPS',    cats:['basics'], goalType:'fixed', goal: 12000, xpMax: 100, stepDefault: 1000 },
+    pushups:  { label:'PUSH-UPS', cats:['arms','chest'], goalType:'mode', goal: BASE_REPS, stepDefault: 10 },
+    squats:   { label:'SQUATS',   cats:['legs'],   goalType:'mode',  goal: BASE_REPS, stepDefault: 10 },
+    crunches: { label:'CRUNCHES', cats:['abs'],    goalType:'mode',  goal: BASE_REPS, stepDefault: 10 }
+  };
+  (function addGuideExercises(){
+    const GUIDE = [["arms", "Push-ups", "Bodyweight staple for triceps and shoulders."], ["arms", "Diamond Push-ups", "Emphasizes the triceps."], ["arms", "Pike Push-ups", "Targets the shoulders and upper chest."], ["arms", "Dumbbell Bicep Curls", "Standard curl for bicep mass."], ["arms", "Dumbbell Hammer Curls", "Targets the brachialis and forearms."], ["arms", "Dumbbell Concentration Curls", "Isolates the bicep for peak contraction."], ["arms", "Dumbbell Overhead Tricep Extensions", "Stretches and builds the triceps."], ["arms", "Dumbbell Tricep Kickbacks", "Great isolation for the back of the arms."], ["arms", "Dumbbell Overhead Shoulder Press", "Builds overall shoulder size."], ["arms", "Dumbbell Lateral Raises", "Targets the side delts for wider shoulders."], ["arms", "Dumbbell Front Raises", "Focuses on the front deltoids."], ["arms", "Dumbbell Bent-Over Lateral Raises", "Targets the rear deltoids."], ["arms", "Chair Dips", "Bodyweight tricep burner using a sturdy chair or couch."], ["arms", "Arm Circles", "Great bodyweight warm-up for shoulder endurance."], ["arms", "Dumbbell Zottman Curls", "Combines standard curl up with reverse curl down for forearms."], ["arms", "Dumbbell Arnold Press", "Rotational press hitting all three shoulder heads."], ["arms", "Dumbbell Standing Wrist Curls", "Builds forearm strength."], ["arms", "Dumbbell Reverse Wrist Curls", "Targets the extensor muscles of the forearms."], ["arms", "Isometric Wall Push", "Bodyweight push against a wall for static arm strength."], ["arms", "Crab Walk", "Bodyweight movement working triceps and shoulders."], ["back", "Dumbbell Bent-Over Rows", "Classic compound movement for mid-back thickness."], ["back", "Dumbbell Single-Arm Rows", "Great for unilateral lat development."], ["back", "Dumbbell Renegade Rows", "Core and back challenge combined."], ["back", "Supermans", "Bodyweight lower back strengthener."], ["back", "Prone Y-Raises", "Targets lower traps and rear shoulders."], ["back", "Dumbbell Pullovers", "Expands the ribcage and targets lats/chest."], ["back", "Dumbbell Shrugs", "Builds upper traps."], ["back", "Reverse Snow Angels", "Bodyweight exercise for posture and upper back."], ["back", "Dumbbell Romanian Deadlifts", "Engages the entire posterior chain including lower back."], ["back", "Bird-Dog", "Bodyweight stabilization for lower back and core."], ["back", "Dumbbell Deadlifts", "Full-body pull heavily involving the back and traps."], ["back", "Inverted Table/Desk Rows", "Bodyweight pulling exercise using household furniture."], ["back", "Dumbbell Seal Rows", "Chest-supported row eliminating momentum."], ["back", "Back Extensions (Floor)", "Lift chest and legs simultaneously."], ["back", "Dumbbell Farmer's Carries", "Builds traps, grip, and upper back stability."], ["back", "Doorway Rows", "Bodyweight pull using a closed door frame safely."], ["back", "Dumbbell Upright Rows", "Targets traps and side delts."], ["back", "Scapular Push-ups", "Bodyweight movement focusing on shoulder blade retraction."], ["back", "Dumbbell Good Mornings", "Hip-hinge movement targeting the lower back and hamstrings."], ["back", "Prone Cobra", "Isometric hold for spinal erectors and posture."], ["chest", "Standard Push-ups", "Fundamental bodyweight chest builder."], ["chest", "Incline Push-ups", "Emphasizes the lower chest."], ["chest", "Decline Push-ups", "Shifts focus to the upper chest."], ["chest", "Wide-Grip Push-ups", "Targets the outer chest."], ["chest", "Dumbbell Floor Press", "Great chest press variation without needing a bench."], ["chest", "Dumbbell Flat Bench/Floor Flyes", "Isolates the pectoral muscles."], ["chest", "Dumbbell Squeeze Press", "Squeezes dumbbells together to maximize inner chest activation."], ["chest", "Dumbbell Decline Floor Press", "Simulates a decline press on the floor."], ["chest", "Dumbbell Incline Press (on floor/couch)", "Targets upper chest."], ["chest", "Chest Dips (between chairs)", "Compound movement for lower chest and triceps."], ["chest", "Dumbbell Pullovers", "Stretches and develops the ribcage and chest."], ["chest", "Plank-to-Push-up", "Dynamic bodyweight movement challenging chest and core."], ["chest", "Archer Push-ups", "Advanced unilateral chest bodyweight exercise."], ["chest", "Resistance Band/Dumbbell Cross-Body Flyes", "Unilateral contraction."], ["chest", "Hindu Push-ups", "Yoga-inspired flowing push-up for chest and shoulders."], ["chest", "Dumbbell Around-The-Worlds", "Arc movement working chest and shoulders."], ["chest", "Clapping Push-ups", "Plyometric bodyweight power builder."], ["chest", "Wall Chest Press", "Isometric bodyweight press."], ["chest", "Dumbbell Single-Arm Floor Press", "Anti-rotation and unilateral chest focus."], ["chest", "Spiderman Push-ups", "Combines a push-up with an oblique knee drive."], ["abs", "Standard Crunches", "Classic upper abdominal movement."], ["abs", "Bicycle Crunches", "Excellent for obliques and full core."], ["abs", "Russian Twists (with or without dumbbell)", "Targets rotational obliques."], ["abs", "Standard Planks", "Isometric total-core strengthener."], ["abs", "Side Planks", "Focuses on obliques and lateral stability."], ["abs", "Leg Raises (Floor)", "Targets lower abdominals."], ["abs", "Flutter Kicks", "Continuous lower abdominal endurance."], ["abs", "Mountain Climbers", "Dynamic core and cardio burner."], ["abs", "Dumbbell Weighted Crunches", "Adds resistance to standard crunches."], ["abs", "Dead Bug", "Bodyweight anti-extension core exercise."], ["abs", "V-Ups", "Advanced simultaneous upper and lower ab contraction."], ["abs", "Hollow Body Hold", "Gymnastics core staple."], ["abs", "Dumbbell Side Bends", "Targeted weighted oblique work."], ["abs", "Toe Touches", "Reaching for toes from a supine position."], ["abs", "Windshield Wipers (Floor)", "Advanced rotational lower ab movement."], ["abs", "Bear Crawl Hold", "Isometric deep core stabilizer."], ["abs", "Scissor Kicks", "Alternating lower body core movement."], ["abs", "Plank Hip Dips", "Dynamic oblique builder."], ["abs", "Reverse Crunches", "Lifts hips to focus on lower abs."], ["abs", "Dumbbell Woodchoppers", "Rotational power and oblique strength."], ["legs", "Bodyweight Squats", "Fundamental lower body movement."], ["legs", "Dumbbell Goblet Squats", "Deep quad and glute builder."], ["legs", "Walking Lunges (with or without dumbbells)", "Dynamic single-leg strength."], ["legs", "Bulgarian Split Squats (with or without dumbbells)", "Unilateral quad and glute destroyer."], ["legs", "Dumbbell Romanian Deadlifts", "Focuses heavily on hamstrings and glutes."], ["legs", "Glute Bridges (Bodyweight or Weighted)", "Isolates the glutes."], ["legs", "Single-Leg Glute Bridges", "Advanced unilateral glute activation."], ["legs", "Calf Raises (Bodyweight or with Dumbbells)", "Targets the gastrocnemius."], ["legs", "Seated Calf Raises (Dumbbells on knees)", "Targets the soleus."], ["legs", "Step-Ups (onto a sturdy chair/box)", "Functional leg strength."], ["legs", "Jump Squats", "Explosive bodyweight plyometric exercise."], ["legs", "Dumbbell Sumo Squats", "Emphasizes inner thighs (adductors) and glutes."], ["legs", "Side Lunges (with or without dumbbells)", "Targets lateral leg muscles and adductors."], ["legs", "Reverse Lunges", "Easier on the knees while building glutes/quads."], ["legs", "Nordic Hamstring Curls (assisted)", "Advanced bodyweight hamstring builder."], ["legs", "Donkey Kicks", "Bodyweight glute isolation."], ["legs", "Fire Hydrants", "Targets side glutes (abductors)."], ["legs", "Wall Sits", "Isometric quad burner."], ["legs", "Pistol Squats (Assisted/Bodyweight)", "Advanced single-leg squat."], ["legs", "Dumbbell Thrusters", "Combines a front squat with an overhead press for full-body power."]];
+    const ALIAS = { 'push-ups':'pushups', 'standard push-ups':'pushups', 'bodyweight squats':'squats', 'standard crunches':'crunches' };
+    const seen = {};
+    GUIDE.forEach(function(it){
+      const cat = it[0], name = it[1], desc = it[2];
+      const norm = name.toLowerCase();
+      let key = ALIAS[norm];
+      if (!key) key = seen[norm];
+      if (key){
+        const reg = EXERCISE_REGISTRY[key];
+        if (reg.cats.indexOf(cat) < 0) reg.cats.push(cat);
+        if (!reg.desc) reg.desc = desc;
+        return;
+      }
+      key = 'x_' + norm.replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
+      seen[norm] = key;
+      EXERCISE_REGISTRY[key] = { label: name.toUpperCase(), cats:[cat], desc: desc, goalType:'mode', goal: BASE_REPS, stepDefault: 10 };
+    });
+  })();
+  const MAX_PROFILES = 5;
+  const LABELS = Object.fromEntries(Object.entries(EXERCISE_REGISTRY).map(([k, v]) => [k, v.label]));
+  let openCats = {};
+
   const RANK_COLORS = { E:'#7d93ab', D:'#00f0ff', C:'#34e0c0', B:'#5c8bff', A:'#b18aff', S:'#ffd166', SS:'#ff0055', Monarch:'#12153f' };
   const RANK_COLORS_RETRO = { E:'#a39a8c', D:'#ff7a33', C:'#ffa040', B:'#4fd1c5', A:'#b8a2ff', S:'#ffc21a', SS:'#ff5a6a', Monarch:'#f3eee5' };
   const RANK_TITLES = { E:'E-Rank Hunter', D:'D-Rank Hunter', C:'C-Rank Hunter', B:'B-Rank Hunter', A:'A-Rank Hunter', S:'S-Rank Hunter — Shadow Monarch', SS:'SS-Rank Hunter', Monarch:'Monarch — Shadow Ruler' };
@@ -641,7 +761,11 @@
   let touchStartX = 0, touchStartY = 0, isSwiping = false;
   let undoStack = [];
   let infoOpen = {};
-  let stepPrefs = Object.assign({}, STEP_DEFAULTS);
+  let stepPrefs = Object.fromEntries(Object.entries(EXERCISE_REGISTRY).map(([k, v]) => [k, v.stepDefault]));
+  let profiles = [];
+  let activeProfileId = null;
+  let editingProfileId = null;
+  let deletingProfileId = null;
   const MAX_UNDO = 30;
 
   function getRankColor(rank){
@@ -651,22 +775,16 @@
   }
   function keyOf(dt){ return dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0'); }
   function todayKey(){ return keyOf(new Date()); }
-  function isWristActive(dk){ return wristStartDate && dk >= wristStartDate; }
-  function getActiveExercises(dk){ const l = ['steps','pushups','squats','crunches']; if (isWristActive(dk)) l.push('wrist'); return l; }
 
   /* ---------- Cycles ---------- */
   function computeAnchor(){
     const allDays = [...Object.keys(logs), ...Object.keys(penalties), ...Object.keys(frozenDays)];
-    if (allDays.length === 0) {
-      const t = new Date(); t.setHours(0,0,0,0); return t.getTime();
-    }
+    if (allDays.length === 0) { const t = new Date(); t.setHours(0,0,0,0); return t.getTime(); }
     allDays.sort();
     const [y,m,d] = allDays[0].split('-').map(Number);
     const dt = new Date(y, m-1, d); dt.setHours(0,0,0,0);
     return dt.getTime();
   }
-  // Cycles are counted in calendar days (not raw milliseconds), so every cycle starts and ends
-  // at local midnight, even when the clocks change for daylight saving time.
   const CYCLE_DAYS = QUEST_WINDOW_HOURS / 24;
   function dayNumOf(y, m, d){ return Math.round(Date.UTC(y, m, d) / 86400000); }
   function anchorDate(){ const a = new Date(cycleAnchor + 12 * 3600000); return new Date(a.getFullYear(), a.getMonth(), a.getDate()); }
@@ -701,15 +819,95 @@
     if (logs[dk]) return 'hard';
     return defaultMode;
   }
+
+  /* ---------- Profiles ---------- */
+  function uid(){ return 'p_' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4); }
+  function makeProfile(name, exercises, goals){
+    return { id: uid(), name: name || 'New Profile', exercises: (exercises || []).slice(), goals: goals || {} };
+  }
+  const REVERSE_WRIST_KEY = 'x_dumbbell_reverse_wrist_curls';
+  function legacyKey(x){ return x === 'wrist' ? REVERSE_WRIST_KEY : x; }
+  function defaultExercises(){ return ['steps','pushups','squats','crunches',REVERSE_WRIST_KEY]; }
+  function getProfileById(id){ return profiles.find(p => p.id === id) || null; }
+  function getActiveProfile(){ return getProfileById(activeProfileId) || profiles[0] || null; }
+  function getProfileForDay(dk){
+    if (logs[dk] && logs[dk].profileId){
+      const p = getProfileById(logs[dk].profileId);
+      if (p) return p;
+    }
+    const c = getCurrentCycle();
+    if (c && c.startDay === dk){
+      const p = getProfileById(activeProfileId);
+      if (p) return p;
+    }
+    return profiles[0] || null;
+  }
+  function getActiveExercises(dk){
+    const p = getProfileForDay(dk);
+    return p ? p.exercises.filter(x => EXERCISE_REGISTRY[x]) : [];
+  }
+  function getBaseGoal(type, dk){
+    const p = getProfileForDay(dk);
+    const override = p && p.goals ? p.goals[type] : undefined;
+    if (typeof override === 'number' && override > 0) return override;
+    const reg = EXERCISE_REGISTRY[type];
+    return reg ? reg.goal : 100;
+  }
+  function getModeMult(dk){ return getModeForDate(dk) === 'hard' ? HARD_MULT : 1; }
   function getGoalForExercise(type, dk){
-    if (type === 'steps') return FIXED_GOALS.steps;
-    if (type === 'wrist') return FIXED_GOALS.wrist;
-    return MODE_GOALS[type][getModeForDate(dk)];
+    return Math.max(1, Math.round(getBaseGoal(type, dk) * getModeMult(dk)));
   }
   function getMaxXPForExercise(type, dk){
-    if (type === 'steps' || type === 'wrist') return 100;
-    return MODE_GOALS[type][getModeForDate(dk)];
+    const reg = EXERCISE_REGISTRY[type];
+    if (!reg) return 100;
+    if (reg.goalType === 'mode') return getGoalForExercise(type, dk);   // XP max = the max the user set
+    const xpBase = reg.xpMax !== undefined ? reg.xpMax : reg.goal;
+    return Math.round(xpBase * getModeMult(dk) * 100) / 100;
   }
+  function getStepAmount(type){
+    const pref = stepPrefs[type];
+    if (typeof pref === 'number' && pref > 0) return pref;
+    const reg = EXERCISE_REGISTRY[type];
+    return reg && reg.stepDefault ? reg.stepDefault : 1;
+  }
+  function hasAnyData(entry){
+    if (!entry) return false;
+    for (const t of Object.keys(EXERCISE_REGISTRY)){ if ((entry[t] || 0) > 0) return true; }
+    if (entry.restedTypes && entry.restedTypes.length > 0) return true;
+    return false;
+  }
+  function ensureProfilesMigrated(){
+    // Old WRIST was replaced by Dumbbell Reverse Wrist Curls: carry over profiles, goals, step size and logged data.
+    (profiles || []).forEach(p => {
+      if (Array.isArray(p.exercises)){
+        p.exercises = p.exercises.map(legacyKey).filter((x, i, a) => a.indexOf(x) === i);
+      }
+      if (p.goals && typeof p.goals.wrist === 'number'){
+        if (typeof p.goals[REVERSE_WRIST_KEY] !== 'number') p.goals[REVERSE_WRIST_KEY] = p.goals.wrist;
+        delete p.goals.wrist;
+      }
+    });
+    if (typeof stepPrefs.wrist === 'number'){
+      if (stepPrefs.wrist !== 5) stepPrefs[REVERSE_WRIST_KEY] = stepPrefs.wrist;
+      delete stepPrefs.wrist;
+    }
+    for (const k in logs){
+      const e = logs[k]; if (!e) continue;
+      if (typeof e.wrist === 'number'){ e[REVERSE_WRIST_KEY] = (e[REVERSE_WRIST_KEY] || 0) + e.wrist; delete e.wrist; }
+      if (Array.isArray(e.restedTypes) && e.restedTypes.includes('wrist')){
+        e.restedTypes = e.restedTypes.map(legacyKey).filter((x, i, a) => a.indexOf(x) === i);
+      }
+    }
+    if (!Array.isArray(profiles) || profiles.length === 0){
+      profiles = [makeProfile('Total Body', defaultExercises(), {})];
+      activeProfileId = profiles[0].id;
+    }
+    if (!activeProfileId || !getProfileById(activeProfileId)) activeProfileId = profiles[0].id;
+    for (const t of Object.keys(EXERCISE_REGISTRY)){
+      if (typeof stepPrefs[t] !== 'number' || stepPrefs[t] < 1) stepPrefs[t] = EXERCISE_REGISTRY[t].stepDefault;
+    }
+  }
+
   function getGoalsForDate(dk){ const g = {}; for (const t of getActiveExercises(dk)) g[t] = getGoalForExercise(t, dk); return g; }
   function isDayComplete(dk, entry){
     if(!entry) return false;
@@ -815,7 +1013,14 @@
     let sum=0;
     for(const k in logs){ const e = logs[k]; if (e && e.restedTypes && e.restedTypes.includes(type)) continue; sum += (e[type]||0); }
     return sum;
+  }  function categoryTotal(catId){
+    let sum = 0;
+    for (const k of Object.keys(EXERCISE_REGISTRY)){
+      if (EXERCISE_REGISTRY[k].cats.includes(catId)) sum += lifetimeTotal(k);
+    }
+    return sum;
   }
+
   function calcStreaks(){
     const cur = getCurrentCycle();
     const idxSet = new Set();
@@ -856,7 +1061,6 @@
     try{ const s = LocalStore.get('settings'); const parsed = s && s.value ? JSON.parse(s.value) : {};
       defaultMode = parsed.defaultMode === 'hard' ? 'hard' : 'normal'; wristStartDate = parsed.wristStartDate || todayKey(); }
     catch(e){ defaultMode = 'normal'; wristStartDate = todayKey(); }
-    // Load persisted step amounts, falling back to defaults for any missing/invalid entry.
     try{
       const sp = LocalStore.get('stepPrefs');
       if (sp && sp.value){
@@ -864,6 +1068,8 @@
         for (const k in p){ if (typeof p[k] === 'number' && p[k] > 0) stepPrefs[k] = p[k]; }
       }
     }catch(e){}
+    try{ const pr = LocalStore.get('profiles'); profiles = pr && pr.value ? JSON.parse(pr.value) : []; }catch(e){ profiles = []; }
+    try{ const ap = LocalStore.get('activeProfileId'); activeProfileId = ap && ap.value ? JSON.parse(ap.value) : null; }catch(e){ activeProfileId = null; }
     if (!wristStartDate) wristStartDate = todayKey();
     if (!cycleAnchor){ cycleAnchor = computeAnchor(); await saveCycleAnchor(); }
     try{
@@ -876,7 +1082,12 @@
         if (freezeActiveSince && freezeFromIdx === null) { freezeActiveSince = null; }
       } else { migrateFreezeState(); }
     }catch(e){ migrateFreezeState(); }
+    ensureProfilesMigrated();
+    await saveLogs();
+    saveStepPrefs();
     await saveSettings();
+    await saveProfiles();
+    await saveActiveProfileId();
     markTimelineDirty();
   }
   async function saveLogs(){ LocalStore.set('logs', JSON.stringify(logs)); markTimelineDirty(); }
@@ -887,13 +1098,14 @@
   async function saveSettings(){ LocalStore.set('settings', JSON.stringify({defaultMode, wristStartDate})); markTimelineDirty(); }
   async function saveCycleAnchor(){ LocalStore.set('cycleAnchor', JSON.stringify(cycleAnchor)); markTimelineDirty(); }
   function saveStepPrefs(){ LocalStore.set('stepPrefs', JSON.stringify(stepPrefs)); }
+  function saveProfiles(){ LocalStore.set('profiles', JSON.stringify(profiles)); }
+  function saveActiveProfileId(){ LocalStore.set('activeProfileId', JSON.stringify(activeProfileId)); }
 
   async function judgeCycles(){
     syncFreeze();
     const current = getCurrentCycle();
     if (!current || cycleAnchor === null) return false;
     if (lastJudgedCycleIdx === null){
-      // First run under cycle system: don't retroactively penalize past cycles.
       lastJudgedCycleIdx = current.index - 1;
       await savePenalties();
       return false;
@@ -986,9 +1198,9 @@
   }
 
   function buildBackupPayload(){
-    return { appName: 'awakening-path', exportVersion: 3, exportedAt: new Date().toISOString(),
+    return { appName: 'awakening-path', exportVersion: 4, exportedAt: new Date().toISOString(),
       logs, penalties, frozenDays, freezeActiveSince, freezeFromIdx, freezeStarts, lastJudgedDate, lastBackupDate, lastJudgedCycleIdx, cycleAnchor,
-      stepPrefs,
+      stepPrefs, profiles, activeProfileId,
       profile: { name: profileName }, settings: { defaultMode, wristStartDate } };
   }
   async function exportData(silent){
@@ -1018,9 +1230,21 @@
       profileName = (parsed.profile && parsed.profile.name) || 'Hunter';
       if (parsed.settings) { defaultMode = parsed.settings.defaultMode === 'hard' ? 'hard' : 'normal'; wristStartDate = parsed.settings.wristStartDate || todayKey(); }
       else { defaultMode = 'normal'; wristStartDate = todayKey(); }
-      stepPrefs = Object.assign({}, STEP_DEFAULTS);
+      stepPrefs = Object.fromEntries(Object.entries(EXERCISE_REGISTRY).map(([k, v]) => [k, v.stepDefault]));
       if (parsed.stepPrefs && typeof parsed.stepPrefs === 'object'){
         for (const k in parsed.stepPrefs){ if (typeof parsed.stepPrefs[k] === 'number' && parsed.stepPrefs[k] > 0) stepPrefs[k] = parsed.stepPrefs[k]; }
+      }
+      if (Array.isArray(parsed.profiles) && parsed.profiles.length){
+        profiles = parsed.profiles.map(p => ({
+          id: typeof p.id === 'string' ? p.id : uid(),
+          name: typeof p.name === 'string' ? p.name.slice(0, 20) : 'Profile',
+          exercises: Array.isArray(p.exercises) ? p.exercises.map(legacyKey).filter(x => EXERCISE_REGISTRY[x]) : defaultExercises(),
+          goals: (p.goals && typeof p.goals === 'object') ? p.goals : {}
+        }));
+        activeProfileId = (typeof parsed.activeProfileId === 'string' && profiles.find(x => x.id === parsed.activeProfileId))
+          ? parsed.activeProfileId : profiles[0].id;
+      } else {
+        profiles = []; activeProfileId = null;
       }
       if (!cycleAnchor){ cycleAnchor = computeAnchor(); }
       if ('freezeStarts' in parsed || 'freezeActiveSince' in parsed) {
@@ -1030,9 +1254,10 @@
         if (freezeActiveSince && freezeFromIdx === null) freezeActiveSince = null;
         _freezeSyncedIdx = null; saveFreezeState();
       } else { migrateFreezeState(); }
+      ensureProfilesMigrated();
       await saveLogs(); await savePenalties(); await saveFrozenDays();
       await saveLastBackupDate(); await saveProfile(); await saveSettings(); await saveCycleAnchor();
-      saveStepPrefs();
+      saveStepPrefs(); saveProfiles(); saveActiveProfileId();
       await judgeCycles();
       undoStack = [];
       toast('[ IMPORTED ] Backup restored', 'clear');
@@ -1109,6 +1334,38 @@
     return '<button class="freeze-btn" data-action="toggle-freeze">❄ ACTIVATE STREAK FREEZE (' + remaining + ' of ' + FREEZE_BUDGET_PER_MONTH + ' left this month)</button>';
   }
 
+  function renderProfileBar(){
+    const activeId = getActiveProfile() ? getActiveProfile().id : null;
+    let html = '<div class="profile-bar-wrap"><div class="profile-bar-label">Training Profiles</div><div class="profile-bar">';
+    for (let i = 0; i < MAX_PROFILES; i++){
+      const p = profiles[i];
+      if (p){
+        const cls = 'profile-slot' + (p.id === activeId ? ' active' : '');
+        html += '<button type="button" class="' + cls + '" data-action="select-profile" data-profile-id="' + p.id + '">' +
+          '<span class="profile-slot-name">' + escapeHtml(p.name) + '</span>' +
+          '<span class="profile-slot-ex">' + p.exercises.length + ' ex</span>' +
+        '</button>';
+      } else {
+        html += '<button type="button" class="profile-slot empty" data-action="new-profile">' +
+          '<span class="profile-slot-plus">+</span>' +
+          '<span class="profile-slot-hint">Empty</span>' +
+        '</button>';
+      }
+    }
+    html += '</div>';
+    // If the running cycle is locked to a different profile, explain it.
+    const c = getCurrentCycle();
+    if (c && logs[c.startDay] && logs[c.startDay].profileId){
+      const locked = getProfileById(logs[c.startDay].profileId);
+      const active = getActiveProfile();
+      if (locked && active && locked.id !== active.id){
+        html += '<div class="profile-bar-note">This cycle runs <b>' + escapeHtml(locked.name) + '</b> · <b>' + escapeHtml(active.name) + '</b> starts next cycle</div>';
+      }
+    }
+    html += '</div>';
+    return html;
+  }
+
   function renderTrain(){
     const cycle = getCurrentCycle();
     if (!cycle) return '<h1 class="page-title centered">Training Quest</h1>' + sysPanel('<div class="empty-msg"><span class="tag">[ INITIALIZING ]</span>Setting up your cycle…</div>');
@@ -1118,13 +1375,16 @@
     const frozen = !!frozenDays[logDay];
     const freezeBanner = frozen ? '<div class="frozen-tag">STREAK FREEZE ACTIVE · CYCLE ' + freezeCycleNumber() + ' — NO PENALTY, NO XP</div>' + renderFreezeButton() : '';
     let cards = '';
+    if (active.length === 0){
+      cards = sysPanel('<div class="empty-msg"><span class="tag">[ NO EXERCISES ]</span>Select a profile with at least one exercise below.</div>');
+    }
     for(const type of active){
       const val = entry[type] || 0;
       const goal = getGoalForExercise(type, logDay);
       const pct = Math.min(100, Math.round(val/goal*100));
       const done = val >= goal;
       const rested = entry.restedTypes && entry.restedTypes.includes(type);
-      const nVal = stepPrefs[type] || STEP_DEFAULTS[type] || 1;
+      const nVal = getStepAmount(type);
       const statusTag = rested ? '<span class="cleared-tag">RESTED</span>' : (done ? '<span class="cleared-tag">CLEARED</span>' : '');
       const inner = '<div class="qhead"><div class="qname">'+LABELS[type]+ statusTag +'</div><div class="qnum">'+val.toLocaleString()+' <span class="goal">/ '+goal.toLocaleString()+'</span></div></div>'+
         '<div class="bar-track"><div class="bar-fill'+(done?' done':'')+'" style="width:'+pct+'%"></div></div>'+
@@ -1137,13 +1397,14 @@
       cards += sysPanel(inner, 'quest-card' + ((done || rested) ? ' done' : ''));
     }
     let popup = '';
-    if (!frozen && isDayComplete(logDay, entry)) {
+    if (!frozen && active.length > 0 && isDayComplete(logDay, entry)) {
       popup = '<div class="daily-complete-popup"><div><div class="popup-title">QUEST COMPLETED</div><div class="popup-title" style="color: var(--gold);">WELL DONE</div><div class="popup-sub">A new cycle awaits.</div></div></div>';
     }
     return '<h1 class="page-title centered">Training Quest</h1>' + freezeBanner + '<div class="train-grid" style="position:relative;">'+cards+popup+'</div>'+
       renderUndoButton() +
       '<div class="penalty-warning">Warning: failing to complete the cycle within 48 hours will result in a punishment.</div>' +
-      nextCycleNote(cycle, frozen);
+      nextCycleNote(cycle, frozen) +
+      renderProfileBar();
   }
   function nextCycleNote(cycle, frozen){
     if (frozen || !isDayComplete(cycle.startDay, logs[cycle.startDay])) return '';
@@ -1235,8 +1496,12 @@
       const frozen = !!frozenDays[k];
       const xp = Math.round(timeline.perDay[k] || 0);
       const active = getActiveExercises(k);
+      const prof = getProfileForDay(k);
       let items = '';
-      for(const type of active){
+      // Always include any exercise with data, even if the current profile no longer lists it.
+      const shown = new Set(active);
+      for (const t of Object.keys(EXERCISE_REGISTRY)){ if ((entry[t] || 0) > 0) shown.add(t); }
+      for(const type of Array.from(shown)){
         const val = entry[type]||0;
         const goal = getGoalForExercise(type, k);
         const done = val >= goal;
@@ -1252,9 +1517,84 @@
       let tagLine = '';
       if (frozen) tagLine = '<div class="frozen-tag">CYCLE FREEZE USED — NO PENALTY, NO XP</div>';
       else if (failed) tagLine = '<div class="fail-tag">CYCLE FAILED — 48H WINDOW EXPIRED</div>';
+      if (prof) tagLine += '<div class="frozen-tag" style="border-color:var(--line-dim);color:var(--text-dim);background:var(--accent-soft);box-shadow:none;">PROFILE: ' + escapeHtml(prof.name) + '</div>';
       out += sysPanel('<div class="ldate">'+fmtDate(k)+' <span class="dow">'+dowOf(k)+'</span><span class="xp '+xpCls+'">'+(xp>=0?'+':'')+xp+' XP</span></div>'+tagLine+'<div class="log-grid">'+items+'</div>', 'log-day');
     }
     return out;
+  }
+
+  function renderProfilesPanel(){
+    let out = '<div class="info-desc">Create up to ' + MAX_PROFILES + ' training profiles. The active profile decides which exercises appear on the Train page. Pick exercises by category and type your own max — leave blank to use the default.</div>';
+    if (!profiles.length){
+      out += '<div class="info-desc" style="color:var(--text-dim);">No profiles yet.</div>';
+    }
+    profiles.forEach((p, pIdx) => {
+      if (editingProfileId === p.id){
+        out += renderProfileEditor(p);
+        return;
+      }
+      const isActive = p.id === activeProfileId;
+      const validEx = p.exercises.filter(x => EXERCISE_REGISTRY[x]);
+      const exLabels = validEx.length
+        ? EXERCISE_CATEGORIES.map(cat => {
+            const n = validEx.filter(x => EXERCISE_REGISTRY[x].cats.includes(cat.id)).length;
+            const txt = cat.label + (cat.id === 'basics' ? '' : (n ? ' (' + n + ')' : ''));
+            return n ? '<span>' + txt + '</span>' : '<span style="opacity:.35">' + txt + '</span>';
+          }).join(' · ')
+        : '<i>no exercises</i>';
+      const pendingDelete = deletingProfileId === p.id;
+      out += '<div class="profile-item' + (isActive ? ' active' : '') + '">' +
+        '<div class="profile-item-head">' +
+          '<div style="min-width:0;flex:1;">' +
+            '<div class="profile-item-name">' + escapeHtml(p.name) + (isActive ? ' · ACTIVE' : '') + '</div>' +
+            '<div class="profile-item-ex">' + exLabels + '</div>' +
+          '</div>' +
+          '<div class="profile-item-btns">' +
+            (!isActive ? '<button type="button" data-action="activate-profile" data-profile-id="' + p.id + '">Use</button>' : '<button type="button" tabindex="-1" aria-hidden="true" style="visibility:hidden">Use</button>') +
+            '<button type="button" data-action="move-profile-up" data-profile-id="' + p.id + '" aria-label="Move up"' + (pIdx > 0 ? '' : ' tabindex="-1" aria-hidden="true" style="visibility:hidden"') + '>▲</button>' +
+            '<button type="button" data-action="move-profile-down" data-profile-id="' + p.id + '" aria-label="Move down"' + (pIdx < profiles.length - 1 ? '' : ' tabindex="-1" aria-hidden="true" style="visibility:hidden"') + '>▼</button>' +
+            '<button type="button" data-action="edit-profile" data-profile-id="' + p.id + '">Edit</button>' +
+            '<button type="button" class="danger" data-action="delete-profile" data-profile-id="' + p.id + '">' + (pendingDelete ? 'Sure?' : 'Del') + '</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    });
+    if (profiles.length < MAX_PROFILES){
+      out += '<button type="button" class="data-io-btn" data-action="new-profile" style="width:100%;margin-top:8px;">+ NEW PROFILE</button>';
+    }
+    return out;
+  }
+
+  function renderProfileEditor(p){
+    let exRows = '';
+    for (const cat of EXERCISE_CATEGORIES){
+      const keys = Object.keys(EXERCISE_REGISTRY).filter(k => EXERCISE_REGISTRY[k].cats.includes(cat.id));
+      if (!keys.length) continue;
+      const selected = keys.filter(k => p.exercises.includes(k)).length;
+      let rows = '';
+      for (const key of keys){
+        const reg = EXERCISE_REGISTRY[key];
+        const checked = p.exercises.includes(key);
+        const override = p.goals ? p.goals[key] : undefined;
+        rows += '<div class="profile-ex-row">' +
+          '<label title="' + escapeHtml(reg.desc || '') + '"><input type="checkbox" data-action="toggle-ex" data-profile-id="' + p.id + '" data-ex="' + key + '"' + (checked ? ' checked' : '') + '> ' + escapeHtml(reg.label) + '</label>' +
+          '<input type="text" inputmode="numeric" class="profile-ex-goal" data-action="set-goal" data-profile-id="' + p.id + '" data-ex="' + key + '" value="' + (typeof override === 'number' ? override : '') + '" placeholder="' + reg.goal + '" aria-label="Maximum (normal mode)">' +
+        '</div>';
+      }
+      exRows += '<details class="ex-cat" data-cat="' + cat.id + '"' + (openCats[cat.id] ? ' open' : '') + '>' +
+        '<summary>' + cat.label + ' <span class="ex-cat-count">' + selected + '/' + keys.length + '</span></summary>' + rows + '</details>';
+    }
+    return '<div class="profile-item active"><div class="profile-editor">' +
+      '<label>Profile name</label>' +
+      '<input type="text" data-action="rename-profile" data-profile-id="' + p.id + '" value="' + escapeHtml(p.name) + '" maxlength="20" placeholder="e.g. Total Body">' +
+      '<label>Pick exercises by category · type your max (normal mode)</label>' +
+      '<div class="info-desc" style="margin-bottom:8px;">The number box is your maximum for the cycle and also your max XP for that exercise. Leave blank for the default. Hard mode increases the max and XP by 5/3, nearly doubling the training.</div>' +
+      exRows +
+      '<div class="profile-editor-actions">' +
+        '<button type="button" data-action="save-profile" data-profile-id="' + p.id + '">DONE</button>' +
+        (profiles.length > 1 ? '<button type="button" data-action="delete-profile" data-profile-id="' + p.id + '" style="color:var(--danger);border-color:var(--danger);">DELETE</button>' : '') +
+      '</div>' +
+    '</div></div>';
   }
 
   function renderInfo(){
@@ -1275,7 +1615,7 @@
         '<button class="theme-btn'+(theme==='retro' ? ' active' : '')+'" id="theme-retro-btn" data-theme-choice="retro"><span class="ic"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4.5" width="18" height="12.5" rx="1.5" stroke="currentColor" stroke-width="1.6"/><path d="M7 8.8l2.6 2.2L7 13.2M12 13.2h4.5M9 20.5h6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Retro</button>'+
       '</div>';
 
-    const modeBody = '<div class="info-desc">Normal mode lowers push-up, squat and crunch quotas to 60 and awards proportional XP (max 60 each). Hard mode keeps them at 100 and awards up to 100 XP each. The choice applies to the current cycle.</div>'+
+    const modeBody = '<div class="info-desc">Normal mode uses the max you set for each exercise (default ' + BASE_REPS + ' reps, 12,000 steps) and awards XP up to that max. Hard mode increases every goal and every XP by 5/3, nearly doubling the training. The choice applies to the current cycle.</div>'+
       '<div class="theme-toggle">'+
         '<button class="theme-btn'+(getModeForDate((getCurrentCycle()||{}).startDay||todayKey())==='normal' ? ' active' : '')+'" data-mode-choice="normal">Normal</button>'+
         '<button class="theme-btn'+(getModeForDate((getCurrentCycle()||{}).startDay||todayKey())==='hard' ? ' active' : '')+'" data-mode-choice="hard">Hard</button>'+
@@ -1312,7 +1652,8 @@
     const dangerBody = '<div class="info-desc">Wipe all local records, daily logs, streaks, and user profile parameters to permanently restart your progress.</div>'+
       '<button class="reset-btn" id="reset-btn">RESET ALL DATA</button>';
 
-    return infoSection('theme',     'Display Theme',                 themeBody) +
+    return infoSection('profiles',  'Training Profiles',             renderProfilesPanel()) +
+      infoSection('theme',     'Display Theme',                 themeBody) +
       infoSection('mode',      'Quest Difficulty',              modeBody) +
       infoSection('reminders', 'Quest Reminders',               renderReminderPanel()) +
       infoSection('backup',    'Backup Your Data',              backupBody) +
@@ -1383,11 +1724,12 @@
     const overviewSvg = '<div class="graph-container"><div class="graph-title">SYSTEM INTEGRAL PROGRESSION</div><svg viewBox="-10 -10 320 115" class="graph-svg"><defs><clipPath id="integralClip"><rect x="0" y="-10" width="'+userX.toFixed(2)+'" height="'+(height + 20)+'" /></clipPath><linearGradient id="areaGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#00f0ff" stop-opacity="0.5"/><stop offset="50%" stop-color="#8a2be2" stop-opacity="0.3"/><stop offset="100%" stop-color="#8b0000" stop-opacity="0.15"/></linearGradient><linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#00f0ff"/><stop offset="45%" stop-color="#0088ff"/><stop offset="75%" stop-color="#b10040"/><stop offset="100%" stop-color="#ff0033"/></linearGradient><filter id="glow" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="3" result="blur" /><feComposite in="SourceGraphic" in2="blur" operator="over" /></filter></defs><path d="'+fullCurve+'" fill="none" stroke="var(--line-dim)" stroke-width="1.5" stroke-dasharray="3 3" /><path d="'+activeIntegralD+'" fill="url(#areaGrad)" clip-path="url(#integralClip)" /><path d="'+fullCurve+'" fill="none" stroke="url(#lineGrad)" stroke-width="2.5" clip-path="url(#integralClip)" filter="url(#glow)" />'+pts.map(p => '<text x="'+p.x+'" y="'+(height + 15)+'" fill="'+(p.r === rk ? 'var(--accent)' : 'var(--text-dim)')+'" font-weight="'+(p.r === rk ? '700' : '400')+'" font-size="8" text-anchor="middle">'+p.r+'</text>').join('')+'<g transform="translate('+userX.toFixed(2)+', '+userY.toFixed(2)+')"><circle r="4" fill="'+dynamicProgressColor+'" filter="url(#glow)" /><circle r="3" fill="#ffffff" stroke="'+dynamicProgressColor+'" stroke-width="1.5" /></g></svg></div>';
     const topHtml = '<div class="profile-top"><div class="profile-row"><div class="rank-badge'+(rk.length > 2 ? ' long' : '')+'" style="color:'+getRankColor(rk)+';">'+rk+'</div><div class="profile-info"><div class="player-name" id="player-name">'+escapeHtml(profileName)+'</div><div class="rank-title">'+RANK_TITLES[rk]+'</div><div class="xp-block"><div class="lvl-row"><span>RANK <b>'+rk+'</b></span><span><b>'+Math.round(effective).toLocaleString()+'</b> / '+Math.round(endRankXP).toLocaleString()+' XP</span><span><b>'+rankPct+'%</b></span></div><div class="bar-track"><div class="bar-fill" style="width:'+rankPct+'%"></div></div></div><div class="flavor">"'+RANK_FLAVOR[rk]+'"</div></div></div></div>';
     const statsHtml = '<div class="stat-grid">'+
-      '<div class="stat-item"><div class="sv">'+lifetimeTotal('steps').toLocaleString()+'</div><div class="sl">TOTAL STEPS</div></div>'+
-      '<div class="stat-item"><div class="sv">'+lifetimeTotal('pushups').toLocaleString()+'</div><div class="sl">TOTAL PUSH-UPS</div></div>'+
-      '<div class="stat-item"><div class="sv">'+lifetimeTotal('squats').toLocaleString()+'</div><div class="sl">TOTAL SQUATS</div></div>'+
-      '<div class="stat-item"><div class="sv">'+lifetimeTotal('crunches').toLocaleString()+'</div><div class="sl">TOTAL CRUNCHES</div></div>'+
-      '<div class="stat-item"><div class="sv">'+lifetimeTotal('wrist').toLocaleString()+'</div><div class="sl">TOTAL WRIST</div></div>'+
+      '<div class="stat-item stat-mult" style="grid-column: span 2;"><div class="sv">'+lifetimeTotal('steps').toLocaleString()+'</div><div class="sl">TOTAL STEPS</div></div>'+
+      '<div class="stat-item"><div class="sv">'+categoryTotal('arms').toLocaleString()+'</div><div class="sl">TOTAL ARMS REPS</div></div>'+
+      '<div class="stat-item"><div class="sv">'+categoryTotal('back').toLocaleString()+'</div><div class="sl">TOTAL BACK REPS</div></div>'+
+      '<div class="stat-item"><div class="sv">'+categoryTotal('chest').toLocaleString()+'</div><div class="sl">TOTAL PECTORAL REPS</div></div>'+
+      '<div class="stat-item"><div class="sv">'+categoryTotal('abs').toLocaleString()+'</div><div class="sl">TOTAL ABDOMINAL REPS</div></div>'+
+      '<div class="stat-item"><div class="sv">'+categoryTotal('legs').toLocaleString()+'</div><div class="sl">TOTAL LEGS REPS</div></div>'+
       '<div class="stat-item"><div class="sv">'+Object.keys(logs).length+'</div><div class="sl">CYCLES TRAINED</div></div>'+
       '<div class="stat-item"><div class="sv">'+streaks.current+'</div><div class="sl">CURRENT STREAK</div></div>'+
       '<div class="stat-item"><div class="sv">'+streaks.longest+'</div><div class="sl">LONGEST STREAK</div></div>'+
@@ -1415,6 +1757,8 @@
     if (drawer) drawer.setAttribute('aria-hidden', open ? 'false' : 'true');
     const btn = document.getElementById('menu-btn');
     if (btn) btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    // When closing, re-render the main app so profile edits show up on the Train page.
+    if (!open) render();
     buzz(8);
   }
   document.getElementById('menu-btn').addEventListener('click', () => setMenu(!menuOpen));
@@ -1455,11 +1799,84 @@
     updateHud();
   }
 
+  /* ---------- Profile actions ---------- */
+  async function setActiveProfile(id){
+    const p = getProfileById(id);
+    if (!p) return;
+    const c = getCurrentCycle();
+    const locked = c && logs[c.startDay] && logs[c.startDay].profileId;
+    const lockedId = locked ? logs[c.startDay].profileId : null;
+    const lockedProf = lockedId ? getProfileById(lockedId) : null;
+    activeProfileId = id;
+    saveActiveProfileId();
+    if (lockedProf && lockedProf.id !== id){
+      toast('Profile set to ' + p.name + ' — applies next cycle', 'clear');
+    } else {
+      toast('Profile: ' + p.name, 'clear');
+    }
+    render();
+  }
+  async function createProfile(){
+    if (profiles.length >= MAX_PROFILES){ toast('Max ' + MAX_PROFILES + ' profiles', 'warn'); return null; }
+    const p = makeProfile('Profile ' + (profiles.length + 1), defaultExercises(), {});
+    profiles.push(p);
+    editingProfileId = p.id;
+    saveProfiles();
+    toast('[ NEW PROFILE ] Edit it in the menu', 'clear');
+    render();
+    return p;
+  }
+  async function deleteProfile(id){
+    const p = getProfileById(id);
+    if (!p) return;
+    if (profiles.length <= 1){ toast('Cannot delete the only profile', 'warn'); return; }
+    if (deletingProfileId !== id){ deletingProfileId = id; refreshMenu(); setTimeout(()=>{ if (deletingProfileId === id){ deletingProfileId = null; refreshMenu(); } }, 4000); return; }
+    deletingProfileId = null;
+    profiles = profiles.filter(x => x.id !== id);
+    if (activeProfileId === id) activeProfileId = profiles[0].id;
+    if (editingProfileId === id) editingProfileId = null;
+    saveProfiles(); saveActiveProfileId();
+    toast('[ PROFILE DELETED ]', 'clear');
+    render();
+  }
+
   function setupDelegatedHandlers(){
     ['app-content', 'menu-content'].forEach((id) => {
     const app = document.getElementById(id);
     if(!app) return;
     app.addEventListener('click', (e)=>{
+      // Profile bar / menu buttons
+      const actionBtn = e.target.closest('[data-action]');
+      if (actionBtn){
+        const act = actionBtn.dataset.action;
+        const pid = actionBtn.dataset.profileId;
+        if (act === 'select-profile'){ setActiveProfile(pid); return; }
+        if (act === 'activate-profile'){ setActiveProfile(pid); return; }
+        if (act === 'new-profile'){ createProfile(); return; }
+        if (act === 'move-profile-up' || act === 'move-profile-down'){
+          const i = profiles.findIndex(x => x.id === pid);
+          const j = act === 'move-profile-up' ? i - 1 : i + 1;
+          if (i >= 0 && j >= 0 && j < profiles.length){
+            const tmp = profiles[i]; profiles[i] = profiles[j]; profiles[j] = tmp;
+            saveProfiles(); buzz(8); refreshMenu();
+          }
+          return;
+        }
+        if (act === 'edit-profile'){
+          editingProfileId = (editingProfileId === pid) ? null : pid;
+          refreshMenu();
+          return;
+        }
+        if (act === 'save-profile'){
+          editingProfileId = null;
+          saveProfiles();
+          toast('[ PROFILE SAVED ]', 'clear');
+          render();
+          return;
+        }
+        if (act === 'delete-profile'){ deleteProfile(pid); return; }
+        // fall through for training actions
+      }
       const head = e.target.closest('.info-head');
       if (head && head.dataset.section) {
         const id = head.dataset.section;
@@ -1475,8 +1892,8 @@
         const type = addBtn.dataset.type;
         const action = addBtn.dataset.action || 'add';
         if (action === 'rest') { handleAdd(type, 0, 'rest'); return; }
-        if (action === 'step-up') { handleAdd(type, stepPrefs[type] || STEP_DEFAULTS[type] || 1, 'add'); return; }
-        if (action === 'step-down') { handleAdd(type, -(stepPrefs[type] || STEP_DEFAULTS[type] || 1), 'add'); return; }
+        if (action === 'step-up') { handleAdd(type, getStepAmount(type), 'add'); return; }
+        if (action === 'step-down') { handleAdd(type, -getStepAmount(type), 'add'); return; }
         handleAdd(type, parseInt(addBtn.dataset.amt, 10), 'add');
         return;
       }
@@ -1499,44 +1916,92 @@
       if (e.target.closest('#data-export-btn')) { exportData(); return; }
       if (e.target.closest('#data-import-btn')) { const input = document.getElementById('data-import-input'); if (input) input.click(); return; }
     });
+    app.addEventListener('toggle', (e) => { const d = e.target; if (d && d.matches && d.matches('details.ex-cat')) openCats[d.dataset.cat] = d.open; }, true);
     app.addEventListener('change', (e)=>{
-      const rem = e.target && e.target.dataset && e.target.dataset.rem;
+      const t = e.target;
+      if (!t) return;
+      // Profile editor: exercise checkbox
+      if (t.matches && t.matches('input[type=checkbox][data-action="toggle-ex"]')){
+        const p = getProfileById(t.dataset.profileId);
+        const ex = t.dataset.ex;
+        if (p){
+          if (t.checked) { if (!p.exercises.includes(ex)) p.exercises.push(ex); }
+          else { p.exercises = p.exercises.filter(x => x !== ex); }
+          saveProfiles();
+          document.querySelectorAll('input[data-action="toggle-ex"][data-ex="' + ex + '"]').forEach(cb => { cb.checked = t.checked; });
+          document.querySelectorAll('details.ex-cat').forEach(d => {
+            const boxes = d.querySelectorAll('input[data-action="toggle-ex"]');
+            const n = Array.from(boxes).filter(cb => cb.checked).length;
+            const c = d.querySelector('.ex-cat-count'); if (c) c.textContent = n + '/' + boxes.length;
+          });
+        }
+        return;
+      }
+      const rem = t.dataset && t.dataset.rem;
       if (rem) {
-        reminderCfg[rem] = e.target.type === 'checkbox' ? e.target.checked : (e.target.value || REM_DEFAULT[rem]);
+        reminderCfg[rem] = t.type === 'checkbox' ? t.checked : (t.value || REM_DEFAULT[rem]);
         saveReminderCfg();
         return;
       }
-      if (e.target && e.target.id === 'data-import-input') {
-        const file = e.target.files && e.target.files[0];
+      if (t.id === 'data-import-input') {
+        const file = t.files && t.files[0];
         importData(file);
-        e.target.value = '';
+        t.value = '';
       }
     });
-    // Sanitize while typing: digits only.
+    // Live handlers while editing: name + goal override (persist without re-render)
     app.addEventListener('input', (e) => {
-      const inp = e.target && e.target.closest && e.target.closest('.step-input');
-      if (!inp) return;
-      const cleaned = String(inp.value).replace(/[^0-9]/g, '');
-      if (cleaned !== inp.value) inp.value = cleaned;
+      const t = e.target;
+      if (!t) return;
+      if (t.matches && t.matches('input[type=text][data-action="rename-profile"]')){
+        const p = getProfileById(t.dataset.profileId);
+        if (p){ p.name = String(t.value).slice(0, 20); saveProfiles(); }
+        return;
+      }
+      if (t.matches && t.matches('input[data-action="set-goal"]')){
+        const cleaned = String(t.value).replace(/[^0-9]/g, '');
+        if (cleaned !== t.value) t.value = cleaned;
+        return;
+      }
+      const inp = t.closest && t.closest('.step-input');
+      if (inp){
+        const cleaned = String(inp.value).replace(/[^0-9]/g, '');
+        if (cleaned !== inp.value) inp.value = cleaned;
+      }
     });
-    // Normalize and persist when the user leaves the field.
     app.addEventListener('focusout', (e) => {
-      const inp = e.target && e.target.closest && e.target.closest('.step-input');
-      if (!inp) return;
-      const type = inp.dataset.type;
-      let v = parseInt(String(inp.value).replace(/[^0-9]/g, ''), 10);
-      if (!isFinite(v) || v < 1) v = 1;
-      if (v > 1000000) v = 1000000;
-      stepPrefs[type] = v;
-      saveStepPrefs();
-      inp.value = String(v);
+      const t = e.target;
+      if (!t) return;
+      if (t.matches && t.matches('input[data-action="set-goal"]')){
+        const p = getProfileById(t.dataset.profileId);
+        const ex = t.dataset.ex;
+        if (p){
+          const v = parseInt(String(t.value).replace(/[^0-9]/g, ''), 10);
+          if (!isFinite(v) || v < 1) delete p.goals[ex];
+          else p.goals[ex] = v;
+          saveProfiles();
+          t.value = (typeof p.goals[ex] === 'number') ? String(p.goals[ex]) : '';
+        }
+        return;
+      }
+      const inp = t.closest && t.closest('.step-input');
+      if (inp){
+        const type = inp.dataset.type;
+        let v = parseInt(String(inp.value).replace(/[^0-9]/g, ''), 10);
+        if (!isFinite(v) || v < 1) v = 1;
+        if (v > 1000000) v = 1000000;
+        stepPrefs[type] = v;
+        saveStepPrefs();
+        inp.value = String(v);
+      }
     });
     });
   }
 
   function ensureEntry(dk){
-    const e = logs[dk] || (logs[dk] = { steps:0, pushups:0, squats:0, crunches:0, wrist:0, restedTypes:[], mode: defaultMode });
+    const e = logs[dk] || (logs[dk] = { restedTypes:[], mode: defaultMode });
     if (!e.restedTypes) e.restedTypes = [];
+    for (const t of Object.keys(EXERCISE_REGISTRY)){ if (typeof e[t] !== 'number') e[t] = 0; }
     return e;
   }
 
@@ -1561,6 +2026,8 @@
     const logDay = cycle.startDay;
     ensureEntry(logDay);
     if (frozenDays[logDay]) { buzz([8,40,8]); toast('[ FROZEN ] Stop the streak freeze first', 'warn'); return; }
+    // Stamp the running profile on the first data change of the cycle.
+    if (!logs[logDay].profileId && activeProfileId) logs[logDay].profileId = activeProfileId;
     const goal = getGoalForExercise(type, logDay);
     const prevVal = logs[logDay][type] || 0;
     const xpBefore = totalXP();
@@ -1654,11 +2121,15 @@
     lastJudgedCycleIdx = null;
     lastBackupDate = null;
     defaultMode = 'normal'; wristStartDate = todayKey();
-    stepPrefs = Object.assign({}, STEP_DEFAULTS);
+    stepPrefs = Object.fromEntries(Object.entries(EXERCISE_REGISTRY).map(([k, v]) => [k, v.stepDefault]));
+    profiles = [makeProfile('Total Body', defaultExercises(), {})];
+    activeProfileId = profiles[0].id;
+    editingProfileId = null; deletingProfileId = null;
     const t = new Date(); t.setHours(0,0,0,0); cycleAnchor = t.getTime();
     undoStack = [];
     await saveLogs(); await saveProfile(); await savePenalties();
-    await saveFrozenDays(); await saveLastBackupDate(); await saveSettings(); await saveCycleAnchor(); saveFreezeState(); saveStepPrefs();
+    await saveFrozenDays(); await saveLastBackupDate(); await saveSettings(); await saveCycleAnchor();
+    saveFreezeState(); saveStepPrefs(); saveProfiles(); saveActiveProfileId();
     render();
   }
 
@@ -1668,7 +2139,7 @@
 
   /* ---------- Daily reminders ---------- */
   const REM_CACHE = 'awakening-state', REM_URL = './__reminder-state.json';
-  const REMINDER_GRACE_MIN = 10; // max lateness (minutes) for a scheduled reminder; keep in sync with sw.js
+  const REMINDER_GRACE_MIN = 10;
   const REM_DEFAULT = { enabled: false, morning: '10:00', evening: true, eveningTime: '20:00' };
   let reminderCfg = (function(){
     try { const r = LocalStore.get('reminders'); return Object.assign({}, REM_DEFAULT, r ? JSON.parse(r.value) : {}); }
