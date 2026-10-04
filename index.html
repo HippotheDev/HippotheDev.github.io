@@ -662,6 +662,9 @@
     [data-theme="retro"] header.hud { padding-left: 12px; padding-right: 12px; }
   }
   .stat-grid .stat-item, [data-theme="retro"] .stat-grid .stat-item { text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .quest-card .qhead { gap: 10px; }
+  .quest-card .qhead .qname { flex: 1 1 auto; min-width: 0; overflow-wrap: anywhere; line-height: 1.25; }
+  .quest-card .qhead .qnum { flex: 0 0 auto; white-space: nowrap; margin-left: auto; }
 </style>
 </head>
 <body>
@@ -742,6 +745,7 @@
   const MAX_PROFILES = 5;
   const LABELS = Object.fromEntries(Object.entries(EXERCISE_REGISTRY).map(([k, v]) => [k, v.label]));
   let openCats = {};
+  let goalCutover = null;   // days BEFORE this date keep the old goals (10k steps etc.)
 
   const RANK_COLORS = { E:'#7d93ab', D:'#00f0ff', C:'#34e0c0', B:'#5c8bff', A:'#b18aff', S:'#ffd166', SS:'#ff0055', Monarch:'#12153f' };
   const RANK_COLORS_RETRO = { E:'#a39a8c', D:'#ff7a33', C:'#ffa040', B:'#4fd1c5', A:'#b8a2ff', S:'#ffc21a', SS:'#ff5a6a', Monarch:'#f3eee5' };
@@ -854,12 +858,32 @@
     return reg ? reg.goal : 100;
   }
   function getModeMult(dk){ return getModeForDate(dk) === 'hard' ? HARD_MULT : 1; }
+  function isLegacyDay(dk){ return !!goalCutover && dk < goalCutover; }
+  // Goals exactly as they were before the 12k / 5-3 update (kept for past days)
+  function legacyFixed(type){
+    if (type === 'steps') return { goal: 10000, xp: 100 };
+    if (type === REVERSE_WRIST_KEY) return { goal: 200, xp: 100 };   // old WRIST
+    return null;
+  }
   function getGoalForExercise(type, dk){
+    if (isLegacyDay(dk)){
+      const p = getProfileForDay(dk);
+      const ov = p && p.goals ? p.goals[type] : undefined;
+      if (typeof ov === 'number' && ov > 0) return ov;
+      const lf = legacyFixed(type);
+      if (lf) return lf.goal;
+      return getModeForDate(dk) === 'hard' ? 100 : 60;
+    }
     return Math.max(1, Math.round(getBaseGoal(type, dk) * getModeMult(dk)));
   }
   function getMaxXPForExercise(type, dk){
     const reg = EXERCISE_REGISTRY[type];
     if (!reg) return 100;
+    if (isLegacyDay(dk)){
+      const lf = legacyFixed(type);
+      if (lf) return lf.xp;
+      return getModeForDate(dk) === 'hard' ? 100 : 60;
+    }
     if (reg.goalType === 'mode') return getGoalForExercise(type, dk);   // XP max = the max the user set
     const xpBase = reg.xpMax !== undefined ? reg.xpMax : reg.goal;
     return Math.round(xpBase * getModeMult(dk) * 100) / 100;
@@ -875,6 +899,16 @@
     for (const t of Object.keys(EXERCISE_REGISTRY)){ if ((entry[t] || 0) > 0) return true; }
     if (entry.restedTypes && entry.restedTypes.length > 0) return true;
     return false;
+  }
+  function initGoalCutover(candidate){
+    if (typeof candidate === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(candidate)){ goalCutover = candidate; }
+    else {
+      let c = null;
+      try { c = getCurrentCycle(); } catch(e){}
+      goalCutover = (c && c.startDay) ? c.startDay : todayKey();
+    }
+    LocalStore.set('goalCutover', goalCutover);
+    markTimelineDirty();
   }
   function ensureProfilesMigrated(){
     // Old WRIST was replaced by Dumbbell Reverse Wrist Curls: carry over profiles, goals, step size and logged data.
@@ -1083,6 +1117,7 @@
       } else { migrateFreezeState(); }
     }catch(e){ migrateFreezeState(); }
     ensureProfilesMigrated();
+    { const gc = LocalStore.get('goalCutover'); initGoalCutover(gc && gc.value ? gc.value : null); }
     await saveLogs();
     saveStepPrefs();
     await saveSettings();
@@ -1200,7 +1235,7 @@
   function buildBackupPayload(){
     return { appName: 'awakening-path', exportVersion: 4, exportedAt: new Date().toISOString(),
       logs, penalties, frozenDays, freezeActiveSince, freezeFromIdx, freezeStarts, lastJudgedDate, lastBackupDate, lastJudgedCycleIdx, cycleAnchor,
-      stepPrefs, profiles, activeProfileId,
+      stepPrefs, profiles, activeProfileId, goalCutover,
       profile: { name: profileName }, settings: { defaultMode, wristStartDate } };
   }
   async function exportData(silent){
@@ -1255,6 +1290,7 @@
         _freezeSyncedIdx = null; saveFreezeState();
       } else { migrateFreezeState(); }
       ensureProfilesMigrated();
+      initGoalCutover(parsed.goalCutover);
       await saveLogs(); await savePenalties(); await saveFrozenDays();
       await saveLastBackupDate(); await saveProfile(); await saveSettings(); await saveCycleAnchor();
       saveStepPrefs(); saveProfiles(); saveActiveProfileId();
@@ -2127,6 +2163,7 @@
     editingProfileId = null; deletingProfileId = null;
     const t = new Date(); t.setHours(0,0,0,0); cycleAnchor = t.getTime();
     undoStack = [];
+    initGoalCutover(null);
     await saveLogs(); await saveProfile(); await savePenalties();
     await saveFrozenDays(); await saveLastBackupDate(); await saveSettings(); await saveCycleAnchor();
     saveFreezeState(); saveStepPrefs(); saveProfiles(); saveActiveProfileId();
