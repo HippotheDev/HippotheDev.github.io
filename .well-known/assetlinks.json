@@ -1,11 +1,8 @@
 [{
-  "relation": ["delegate_permission/common.handle_all_urls"],
-  "target": {
-    "namespace": "android_app",
-    "package_name": "io.github.hippothedev.twa",
-    "sha256_cert_fingerprints": [
-      "02:2A:1E:D9:FE:B0:E6:C9:82:6D:F9:9C:58:35:0B:77:89:A7:1A:D5:1F:14:2F:40:44:9F:91:D5:8C:02:78:C1",
-      "5E:8F:16:06:2E:A3:CD:2C:4A:0D:54:78:76:BA:A6:F3:8C:AB:F6:25:05:A0:80:61:02:9B:40:55:04:13:B9:86"
-    ]
-  }
-}]
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "io.github.hippothedev.twa",
+        "sha256_cert_fingerprints": ["01:55:6C:AD:93:91:EB:3A:B3:8F:D2:5C:97:E4:F6:02:DE:6F:7F:2C:EC:E9:9D:F7:50:16:BA:C5:1E:1D:B0:A9"]
+      }
+    }]
