@@ -846,9 +846,40 @@
     }
     return profiles[0] || null;
   }
+  const LEGACY_EXERCISES = ['steps','pushups','squats','crunches','x_dumbbell_reverse_wrist_curls'];
+  function firstWristDay(){
+    let first = null;
+    for (const k in logs){
+      const e = logs[k]; if (!e) continue;
+      const has = (e[REVERSE_WRIST_KEY] || 0) > 0 || (Array.isArray(e.restedTypes) && e.restedTypes.includes(REVERSE_WRIST_KEY));
+      if (has && (first === null || k < first)) first = k;
+    }
+    return first;
+  }
   function getActiveExercises(dk){
+    const e = logs[dk];
+    if (e && Array.isArray(e.exSnapshot)) return e.exSnapshot.filter(x => EXERCISE_REGISTRY[x]);
     const p = getProfileForDay(dk);
-    return p ? p.exercises.filter(x => EXERCISE_REGISTRY[x]) : [];
+    let list = p ? p.exercises.filter(x => EXERCISE_REGISTRY[x]) : [];
+    if (isLegacyDay(dk)){
+      const fw = firstWristDay();
+      list = list.filter(x => LEGACY_EXERCISES.includes(x) && (x !== REVERSE_WRIST_KEY || (fw !== null && dk >= fw)));
+    }
+    return list;
+  }
+  // Freeze the exercise list of every finished cycle so later profile edits never rewrite history.
+  function snapshotPastDays(){
+    const c = getCurrentCycle();
+    if (!c) return false;
+    let changed = false;
+    for (const k in logs){
+      const e = logs[k];
+      if (!e || k >= c.startDay || Array.isArray(e.exSnapshot)) continue;
+      e.exSnapshot = getActiveExercises(k);
+      changed = true;
+    }
+    if (changed){ LocalStore.set('logs', JSON.stringify(logs)); markTimelineDirty(); }
+    return changed;
   }
   function getBaseGoal(type, dk){
     const p = getProfileForDay(dk);
@@ -1118,6 +1149,7 @@
     }catch(e){ migrateFreezeState(); }
     ensureProfilesMigrated();
     { const gc = LocalStore.get('goalCutover'); initGoalCutover(gc && gc.value ? gc.value : null); }
+    snapshotPastDays();
     await saveLogs();
     saveStepPrefs();
     await saveSettings();
@@ -1291,6 +1323,7 @@
       } else { migrateFreezeState(); }
       ensureProfilesMigrated();
       initGoalCutover(parsed.goalCutover);
+      snapshotPastDays();
       await saveLogs(); await savePenalties(); await saveFrozenDays();
       await saveLastBackupDate(); await saveProfile(); await saveSettings(); await saveCycleAnchor();
       saveStepPrefs(); saveProfiles(); saveActiveProfileId();
@@ -2417,7 +2450,7 @@
     const c = getCurrentCycle();
     if (c && c.index !== lastCycleIdx){
       lastCycleIdx = c.index;
-      judgeCycles().then(() => render());
+      judgeCycles().then(() => { snapshotPastDays(); render(); });
     }
     clockTimer = setTimeout(tickClock, 1000 - (Date.now() % 1000));
   }
