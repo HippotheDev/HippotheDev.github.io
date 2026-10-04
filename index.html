@@ -137,6 +137,23 @@
   .sub-btn:hover { background: var(--danger); color: #fff; box-shadow: 0 0 20px var(--danger-glow); }
   .rest-btn { background: rgba(255,215,0,0.08); border-color: var(--gold); color: var(--gold); }
   .rest-btn:hover { background: var(--gold); color: #000; box-shadow: 0 0 20px var(--gold-glow); }
+
+  /* ===== Riga input allenamento: [-] [n] [+] [Rest] ===== */
+  .btn-input-row { display: grid; grid-template-columns: 1fr 1.5fr 1fr 1.5fr; gap: 6px; align-items: stretch; }
+  .btn-input-row .add-btn { height: 38px; padding: 0; display: flex; align-items: center; justify-content: center; }
+  .step-input { display: block; width: 100%; min-width: 0; height: 38px; box-sizing: border-box;
+    padding: 0 6px; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 14px;
+    text-align: center; color: var(--accent); background: var(--panel2); border: 1px solid var(--line);
+    clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.5); outline: none; -webkit-appearance: none; appearance: none; }
+  .step-input::-webkit-outer-spin-button, .step-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .step-input:focus { border-color: var(--accent); background: var(--accent-soft); color: var(--text);
+    box-shadow: 0 0 15px var(--accent-glow), inset 0 0 10px rgba(0,0,0,0.5); }
+  [data-theme="retro"] .step-input { font-family: 'Chakra Petch', sans-serif; font-size: 16px; color: var(--text);
+    background: var(--panel); border: 2px solid var(--line); border-radius: 3px; box-shadow: none; clip-path: none; }
+  [data-theme="retro"] .step-input:focus { border-color: var(--accent); background: var(--panel); color: var(--accent);
+    box-shadow: 0 0 0 2px var(--accent-soft); }
+
   .cleared-tag { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
     color: var(--gold); border: 1px solid var(--gold); background: rgba(255,215,0,0.15); padding: 2px 8px; margin-left: 8px;
     box-shadow: 0 0 12px var(--gold-glow); }
@@ -604,7 +621,8 @@
   const FIXED_GOALS = { steps: 10000, wrist: 200 };
   const MODE_GOALS = { pushups: { normal: 60, hard: 100 }, squats: { normal: 60, hard: 100 }, crunches: { normal: 60, hard: 100 } };
   const LABELS = { steps:'STEPS', pushups:'PUSH-UPS', squats:'SQUATS', crunches:'CRUNCHES', wrist:'WRIST' };
-  const AMOUNTS = { steps:[1,10,100,1000], pushups:[1,5,20,50], squats:[1,5,20,50], crunches:[1,5,20,50], wrist:[1,5,20,50] };
+  // Default step amounts for the [+] / [−] input row. Persisted per exercise under `stepPrefs`.
+  const STEP_DEFAULTS = { steps: 1000, pushups: 10, squats: 10, crunches: 10, wrist: 5 };
   const RANK_COLORS = { E:'#7d93ab', D:'#00f0ff', C:'#34e0c0', B:'#5c8bff', A:'#b18aff', S:'#ffd166', SS:'#ff0055', Monarch:'#12153f' };
   const RANK_COLORS_RETRO = { E:'#a39a8c', D:'#ff7a33', C:'#ffa040', B:'#4fd1c5', A:'#b8a2ff', S:'#ffc21a', SS:'#ff5a6a', Monarch:'#f3eee5' };
   const RANK_TITLES = { E:'E-Rank Hunter', D:'D-Rank Hunter', C:'C-Rank Hunter', B:'B-Rank Hunter', A:'A-Rank Hunter', S:'S-Rank Hunter — Shadow Monarch', SS:'SS-Rank Hunter', Monarch:'Monarch — Shadow Ruler' };
@@ -623,6 +641,7 @@
   let touchStartX = 0, touchStartY = 0, isSwiping = false;
   let undoStack = [];
   let infoOpen = {};
+  let stepPrefs = Object.assign({}, STEP_DEFAULTS);
   const MAX_UNDO = 30;
 
   function getRankColor(rank){
@@ -710,20 +729,13 @@
   function fmtDateShort(key){ const [y,m,d] = key.split('-').map(Number); return new Date(y, m-1, d).toLocaleDateString('en-US', { month:'short', day:'numeric' }); }
   function dowOf(key){ const [y,m,d] = key.split('-').map(Number); return new Date(y,m-1,d).toLocaleDateString('en-US',{weekday:'short'}); }
 
-  /* ---------- Streak freeze ----------
-     A freeze is switched on once and stays on, cycle after cycle, until the user stops it.
-     freezeActiveSince = calendar date the running freeze was activated (null when off)
-     freezeFromIdx     = index of the cycle it started in
-     freezeStarts      = activation dates; the monthly budget counts activations by their month
-     frozenDays        = every cycle actually covered (keyed by the cycle's first day), kept current by syncFreeze */
+  /* ---------- Streak freeze ---------- */
   function isValidKey(k){ return typeof k === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(k); }
   function cycleStartDayOf(idx){ return keyOf(new Date(cycleStartMsOf(idx))); }
   function getFreezesUsedThisMonth(){ const ym = todayKey().slice(0, 7); return freezeStarts.filter(k => k.startsWith(ym)).length; }
   function freezesRemaining(){ return Math.max(0, FREEZE_BUDGET_PER_MONTH - getFreezesUsedThisMonth()); }
   function freezeCycleNumber(){ const c = getCurrentCycle(); return (freezeActiveSince && c && freezeFromIdx !== null) ? c.index - freezeFromIdx + 1 : 0; }
   function saveFreezeState(){ LocalStore.set('freezeState', JSON.stringify({ activeSince: freezeActiveSince, fromIdx: freezeFromIdx, starts: freezeStarts })); }
-  // Older data froze single cycles: each run of consecutive frozen cycles counts as one use,
-  // and a run that reaches the current cycle becomes the running freeze.
   function migrateFreezeState(){
     freezeStarts = []; freezeActiveSince = null; freezeFromIdx = null; _freezeSyncedIdx = null;
     const cur = getCurrentCycle();
@@ -735,7 +747,6 @@
     if (cur && prev === cur.index) { freezeFromIdx = runStart; freezeActiveSince = cycleStartDayOf(runStart); }
     saveFreezeState();
   }
-  // Marks every cycle from the one the freeze started in up to the current one as frozen.
   function syncFreeze(force){
     if (!freezeActiveSince || freezeFromIdx === null) return false;
     const c = getCurrentCycle();
@@ -845,6 +856,14 @@
     try{ const s = LocalStore.get('settings'); const parsed = s && s.value ? JSON.parse(s.value) : {};
       defaultMode = parsed.defaultMode === 'hard' ? 'hard' : 'normal'; wristStartDate = parsed.wristStartDate || todayKey(); }
     catch(e){ defaultMode = 'normal'; wristStartDate = todayKey(); }
+    // Load persisted step amounts, falling back to defaults for any missing/invalid entry.
+    try{
+      const sp = LocalStore.get('stepPrefs');
+      if (sp && sp.value){
+        const p = JSON.parse(sp.value);
+        for (const k in p){ if (typeof p[k] === 'number' && p[k] > 0) stepPrefs[k] = p[k]; }
+      }
+    }catch(e){}
     if (!wristStartDate) wristStartDate = todayKey();
     if (!cycleAnchor){ cycleAnchor = computeAnchor(); await saveCycleAnchor(); }
     try{
@@ -867,6 +886,7 @@
   async function saveLastBackupDate(){ LocalStore.set('lastBackupDate', JSON.stringify(lastBackupDate)); }
   async function saveSettings(){ LocalStore.set('settings', JSON.stringify({defaultMode, wristStartDate})); markTimelineDirty(); }
   async function saveCycleAnchor(){ LocalStore.set('cycleAnchor', JSON.stringify(cycleAnchor)); markTimelineDirty(); }
+  function saveStepPrefs(){ LocalStore.set('stepPrefs', JSON.stringify(stepPrefs)); }
 
   async function judgeCycles(){
     syncFreeze();
@@ -968,6 +988,7 @@
   function buildBackupPayload(){
     return { appName: 'awakening-path', exportVersion: 3, exportedAt: new Date().toISOString(),
       logs, penalties, frozenDays, freezeActiveSince, freezeFromIdx, freezeStarts, lastJudgedDate, lastBackupDate, lastJudgedCycleIdx, cycleAnchor,
+      stepPrefs,
       profile: { name: profileName }, settings: { defaultMode, wristStartDate } };
   }
   async function exportData(silent){
@@ -997,6 +1018,10 @@
       profileName = (parsed.profile && parsed.profile.name) || 'Hunter';
       if (parsed.settings) { defaultMode = parsed.settings.defaultMode === 'hard' ? 'hard' : 'normal'; wristStartDate = parsed.settings.wristStartDate || todayKey(); }
       else { defaultMode = 'normal'; wristStartDate = todayKey(); }
+      stepPrefs = Object.assign({}, STEP_DEFAULTS);
+      if (parsed.stepPrefs && typeof parsed.stepPrefs === 'object'){
+        for (const k in parsed.stepPrefs){ if (typeof parsed.stepPrefs[k] === 'number' && parsed.stepPrefs[k] > 0) stepPrefs[k] = parsed.stepPrefs[k]; }
+      }
       if (!cycleAnchor){ cycleAnchor = computeAnchor(); }
       if ('freezeStarts' in parsed || 'freezeActiveSince' in parsed) {
         freezeActiveSince = isValidKey(parsed.freezeActiveSince) ? parsed.freezeActiveSince : null;
@@ -1007,6 +1032,7 @@
       } else { migrateFreezeState(); }
       await saveLogs(); await savePenalties(); await saveFrozenDays();
       await saveLastBackupDate(); await saveProfile(); await saveSettings(); await saveCycleAnchor();
+      saveStepPrefs();
       await judgeCycles();
       undoStack = [];
       toast('[ IMPORTED ] Backup restored', 'clear');
@@ -1043,7 +1069,6 @@
     const logDay = cycle.startDay;
     syncFreeze();
     if (freezeActiveSince) {
-      // STOP the running freeze. Earlier frozen cycles stay frozen; the current cycle becomes active again.
       const n = freezeCycleNumber();
       const sameCycle = freezeFromIdx === cycle.index;
       freezeActiveSince = null; freezeFromIdx = null; _freezeSyncedIdx = null;
@@ -1099,15 +1124,14 @@
       const pct = Math.min(100, Math.round(val/goal*100));
       const done = val >= goal;
       const rested = entry.restedTypes && entry.restedTypes.includes(type);
-      const amounts = AMOUNTS[type];
-      const smallestAmt = amounts[0], largerAmts = amounts.slice(1);
+      const nVal = stepPrefs[type] || STEP_DEFAULTS[type] || 1;
       const statusTag = rested ? '<span class="cleared-tag">RESTED</span>' : (done ? '<span class="cleared-tag">CLEARED</span>' : '');
       const inner = '<div class="qhead"><div class="qname">'+LABELS[type]+ statusTag +'</div><div class="qnum">'+val.toLocaleString()+' <span class="goal">/ '+goal.toLocaleString()+'</span></div></div>'+
         '<div class="bar-track"><div class="bar-fill'+(done?' done':'')+'" style="width:'+pct+'%"></div></div>'+
-        '<div class="btn-container"><div class="btn-row top-row">'+ largerAmts.map(a=>'<button class="add-btn" data-type="'+type+'" data-amt="'+a+'">+'+a.toLocaleString()+'</button>').join('') +'</div>'+
-        '<div class="btn-row bottom-row">'+
-          '<button class="add-btn" data-type="'+type+'" data-amt="'+smallestAmt+'">+'+smallestAmt.toLocaleString()+'</button>'+
-          '<button class="add-btn sub-btn" data-type="'+type+'" data-amt="-1">-1</button>'+
+        '<div class="btn-container"><div class="btn-input-row">'+
+          '<button class="add-btn sub-btn" data-type="'+type+'" data-action="step-down" aria-label="Subtract">−</button>'+
+          '<input type="text" inputmode="numeric" pattern="[0-9]*" class="step-input" data-type="'+type+'" value="'+nVal+'" aria-label="Step amount">'+
+          '<button class="add-btn" data-type="'+type+'" data-action="step-up" aria-label="Add">+</button>'+
           '<button class="add-btn rest-btn" data-type="'+type+'" data-action="rest">Rest</button>'+
         '</div></div>';
       cards += sysPanel(inner, 'quest-card' + ((done || rested) ? ' done' : ''));
@@ -1155,7 +1179,6 @@
       monthRow += '<div class="heatmap-month" style="grid-column:' + (m.index + 1) + ' / ' + (endIdx + 1) + ';">' + m.name + '</div>';
     });
     const timeline = computeXPTimeline();
-    // One place decides a cycle's state; the colour class and the tooltip both come from it.
     function cellStatus(cell){
       const logDay = cell.logDay;
       if (cell.future) return { cls: 'future', tip: '' };
@@ -1449,9 +1472,12 @@
       }
       const addBtn = e.target.closest('.add-btn');
       if (addBtn && addBtn.dataset.type) {
+        const type = addBtn.dataset.type;
         const action = addBtn.dataset.action || 'add';
-        if (action === 'rest') handleAdd(addBtn.dataset.type, 0, 'rest');
-        else handleAdd(addBtn.dataset.type, parseInt(addBtn.dataset.amt,10), 'add');
+        if (action === 'rest') { handleAdd(type, 0, 'rest'); return; }
+        if (action === 'step-up') { handleAdd(type, stepPrefs[type] || STEP_DEFAULTS[type] || 1, 'add'); return; }
+        if (action === 'step-down') { handleAdd(type, -(stepPrefs[type] || STEP_DEFAULTS[type] || 1), 'add'); return; }
+        handleAdd(type, parseInt(addBtn.dataset.amt, 10), 'add');
         return;
       }
       if (e.target.closest('#undo-btn')) { performUndo(); return; }
@@ -1485,6 +1511,25 @@
         importData(file);
         e.target.value = '';
       }
+    });
+    // Sanitize while typing: digits only.
+    app.addEventListener('input', (e) => {
+      const inp = e.target && e.target.closest && e.target.closest('.step-input');
+      if (!inp) return;
+      const cleaned = String(inp.value).replace(/[^0-9]/g, '');
+      if (cleaned !== inp.value) inp.value = cleaned;
+    });
+    // Normalize and persist when the user leaves the field.
+    app.addEventListener('focusout', (e) => {
+      const inp = e.target && e.target.closest && e.target.closest('.step-input');
+      if (!inp) return;
+      const type = inp.dataset.type;
+      let v = parseInt(String(inp.value).replace(/[^0-9]/g, ''), 10);
+      if (!isFinite(v) || v < 1) v = 1;
+      if (v > 1000000) v = 1000000;
+      stepPrefs[type] = v;
+      saveStepPrefs();
+      inp.value = String(v);
     });
     });
   }
@@ -1609,10 +1654,11 @@
     lastJudgedCycleIdx = null;
     lastBackupDate = null;
     defaultMode = 'normal'; wristStartDate = todayKey();
+    stepPrefs = Object.assign({}, STEP_DEFAULTS);
     const t = new Date(); t.setHours(0,0,0,0); cycleAnchor = t.getTime();
     undoStack = [];
     await saveLogs(); await saveProfile(); await savePenalties();
-    await saveFrozenDays(); await saveLastBackupDate(); await saveSettings(); await saveCycleAnchor(); saveFreezeState();
+    await saveFrozenDays(); await saveLastBackupDate(); await saveSettings(); await saveCycleAnchor(); saveFreezeState(); saveStepPrefs();
     render();
   }
 
@@ -1631,14 +1677,12 @@
   const remToMins = t => { const [h,m] = String(t||'0:0').split(':').map(Number); return (h||0)*60 + (m||0); };
   const notifSupported = () => 'Notification' in window;
   const notifGranted = () => notifSupported() && Notification.permission === 'granted';
-  // A cycle spans CYCLE_DAYS calendar days (midnight to midnight). 1 = first day, 2 = final day.
   function cycleDay(){
     const c = getCurrentCycle();
     if (!c) return 0;
     const [y, m, d] = c.startDay.split('-').map(Number), n = new Date();
     return dayNumOf(n.getFullYear(), n.getMonth(), n.getDate()) - dayNumOf(y, m - 1, d) + 1;
   }
-  // The morning reminder is sent on every day of the cycle; the last call only on its final day.
   function remSlots(){
     const slots = [{ id: 'morning', time: reminderCfg.morning }];
     if (reminderCfg.evening && cycleDay() >= CYCLE_DAYS) slots.push({ id: 'evening', time: reminderCfg.eveningTime });
@@ -1773,7 +1817,6 @@
     const start = new Date(c.startMs);
     const dayN = n => new Date(start.getFullYear(), start.getMonth(), start.getDate() + n);
     const stamp = ymd(new Date()) + 'T000000Z';
-    // Every event repeats every CYCLE_DAYS days, starting from the current cycle, so it stays in step with the cycles.
     const ev = (uid, date, time, summary, desc) => ['BEGIN:VEVENT', 'UID:' + uid, 'DTSTAMP:' + stamp,
       'DTSTART:' + ymd(date) + 'T' + time.replace(':', '') + '00', 'DURATION:PT15M', 'RRULE:FREQ=DAILY;INTERVAL=' + CYCLE_DAYS,
       'SUMMARY:' + summary, 'DESCRIPTION:' + desc,
