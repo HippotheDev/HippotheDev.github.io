@@ -352,6 +352,7 @@
     clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
     transition: background 0.2s, color 0.2s, box-shadow 0.2s; }
   .data-io-btn:hover { background: var(--accent); color: var(--bg); box-shadow: 0 0 20px var(--accent-glow); }
+  .data-io-link { display: block; width: 100%; text-align: center; text-decoration: none; box-sizing: border-box; margin-top: 8px; }
   .data-io-status { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-dim); margin-top: 6px; }
   @media (min-width: 600px) { .train-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; } .train-grid .sys-panel-wrapper { margin-bottom: 0; } }
   [data-theme="retro"]{--bg:#16130f;--bg2:#1d1914;--panel:#211d18;--panel2:#2b2620;--line:#f3eee5;--line-dim:rgba(243,238,229,.22);--accent:#ff5a14;--accent-glow:rgba(255,90,20,.3);--accent-soft:rgba(255,90,20,.16);--magenta:#ff5a14;--magenta-glow:rgba(255,90,20,.3);--gold:#ffc21a;--gold-glow:rgba(255,194,26,.4);--text:#f3eee5;--text-dim:#a39a8c;--danger:#ff5a6a;--danger-glow:rgba(255,90,106,.3);--success:#4fd18b;--header-bg:#141414;--bottom-bg:#16130f;--bg-radial:none;--overlay-bg:rgba(0,0,0,.65);--progress-track:#2b2620;--progress-fill-start:#ff5a14;--progress-fill-end:#ff5a14;--progress-glow:transparent;--panel-clip:none;--panel-clip-lg:none;--ink:#f3eee5;--shadow-c:#000;--dot:rgba(255,240,220,.1);--tag-bg:#f3eee5;--tag-fg:#16130f;--ink-warn:#c2410c;--freeze-bg:var(--panel);--freeze-fg:#4fd1c5;--freeze-border:var(--line);--freeze-glow:transparent;--heat-empty-bg:var(--panel2);--heat-empty-border:var(--line-dim);--heat-incomplete-bg:#d1202f;--heat-incomplete-shadow:none;--heat-partial-bg:#ffc21a;--heat-partial-shadow:none;--heat-complete-bg:#4fd18b;--heat-complete-shadow:none;--heat-rested-bg:#5c8bff;--heat-rested-shadow:none;--heat-frozen-bg:#a8e0ff;--heat-frozen-shadow:none;--heat-cell-radius:0;--heat-today-outline:2px solid var(--gold)}
@@ -702,11 +703,10 @@
   const FREEZE_BUDGET_PER_MONTH = 1;
   const BACKUP_INTERVAL_DAYS = 14;
   const QUEST_WINDOW_HOURS = 48;
+  const PRIVACY_URL = 'https://hippothedev.github.io/privacy.html';
 
-  /* ---------- Exercise registry (single source of truth) ----------
-     goal = NORMAL-mode max. Hard mode multiplies goal and XP by 5/3.
-     rep-type exercises ('mode'): XP max = the max the user inputs (goal). */
-  const HARD_MULT = 5 / 3;   // hard mode = x5/3 of normal
+  /* ---------- Exercise registry ---------- */
+  const HARD_MULT = 5 / 3;
   const BASE_REPS = 60;
   const EXERCISE_CATEGORIES = [
     { id:'basics', label:'STEPS' },
@@ -745,7 +745,7 @@
   const MAX_PROFILES = 5;
   const LABELS = Object.fromEntries(Object.entries(EXERCISE_REGISTRY).map(([k, v]) => [k, v.label]));
   let openCats = {};
-  let goalCutover = null;   // days BEFORE this date keep the old goals (10k steps etc.)
+  let goalCutover = null;
 
   const RANK_COLORS = { E:'#7d93ab', D:'#00f0ff', C:'#34e0c0', B:'#5c8bff', A:'#b18aff', S:'#ffd166', SS:'#ff0055', Monarch:'#12153f' };
   const RANK_COLORS_RETRO = { E:'#a39a8c', D:'#ff7a33', C:'#ffa040', B:'#4fd1c5', A:'#b8a2ff', S:'#ffc21a', SS:'#ff5a6a', Monarch:'#f3eee5' };
@@ -867,7 +867,6 @@
     }
     return list;
   }
-  // Freeze the exercise list of every finished cycle so later profile edits never rewrite history.
   function snapshotPastDays(){
     const c = getCurrentCycle();
     if (!c) return false;
@@ -890,10 +889,9 @@
   }
   function getModeMult(dk){ return getModeForDate(dk) === 'hard' ? HARD_MULT : 1; }
   function isLegacyDay(dk){ return !!goalCutover && dk < goalCutover; }
-  // Goals exactly as they were before the 12k / 5-3 update (kept for past days)
   function legacyFixed(type){
     if (type === 'steps') return { goal: 10000, xp: 100 };
-    if (type === REVERSE_WRIST_KEY) return { goal: 200, xp: 100 };   // old WRIST
+    if (type === REVERSE_WRIST_KEY) return { goal: 200, xp: 100 };
     return null;
   }
   function getGoalForExercise(type, dk){
@@ -915,7 +913,7 @@
       if (lf) return lf.xp;
       return getModeForDate(dk) === 'hard' ? 100 : 60;
     }
-    if (reg.goalType === 'mode') return getGoalForExercise(type, dk);   // XP max = the max the user set
+    if (reg.goalType === 'mode') return getGoalForExercise(type, dk);
     const xpBase = reg.xpMax !== undefined ? reg.xpMax : reg.goal;
     return Math.round(xpBase * getModeMult(dk) * 100) / 100;
   }
@@ -942,7 +940,6 @@
     markTimelineDirty();
   }
   function ensureProfilesMigrated(){
-    // Old WRIST was replaced by Dumbbell Reverse Wrist Curls: carry over profiles, goals, step size and logged data.
     (profiles || []).forEach(p => {
       if (Array.isArray(p.exercises)){
         p.exercises = p.exercises.map(legacyKey).filter((x, i, a) => a.indexOf(x) === i);
@@ -1078,7 +1075,8 @@
     let sum=0;
     for(const k in logs){ const e = logs[k]; if (e && e.restedTypes && e.restedTypes.includes(type)) continue; sum += (e[type]||0); }
     return sum;
-  }  function categoryTotal(catId){
+  }
+  function categoryTotal(catId){
     let sum = 0;
     for (const k of Object.keys(EXERCISE_REGISTRY)){
       if (EXERCISE_REGISTRY[k].cats.includes(catId)) sum += lifetimeTotal(k);
@@ -1422,7 +1420,6 @@
       }
     }
     html += '</div>';
-    // If the running cycle is locked to a different profile, explain it.
     const c = getCurrentCycle();
     if (c && logs[c.startDay] && logs[c.startDay].profileId){
       const locked = getProfileById(logs[c.startDay].profileId);
@@ -1567,7 +1564,6 @@
       const active = getActiveExercises(k);
       const prof = getProfileForDay(k);
       let items = '';
-      // Always include any exercise with data, even if the current profile no longer lists it.
       const shown = new Set(active);
       for (const t of Object.keys(EXERCISE_REGISTRY)){ if ((entry[t] || 0) > 0) shown.add(t); }
       for(const type of Array.from(shown)){
@@ -1718,6 +1714,10 @@
       '<div class="backup-status '+bstate.level+'">'+bstate.text+'</div>'+
       '<div class="data-io-status">Importing a backup replaces your current logs, penalties, and profile name.</div>';
 
+    const privacyBody = '<div class="info-desc">Read the full privacy policy for Awakening Path. The short version: the app collects no personal data — everything you enter stays on this device.</div>' +
+      '<a class="data-io-btn data-io-link" href="' + PRIVACY_URL + '" target="_blank" rel="noopener noreferrer">OPEN PRIVACY POLICY ↗</a>' +
+      '<div class="data-io-status">Opens in your browser at ' + PRIVACY_URL + '</div>';
+
     const dangerBody = '<div class="info-desc">Wipe all local records, daily logs, streaks, and user profile parameters to permanently restart your progress.</div>'+
       '<button class="reset-btn" id="reset-btn">RESET ALL DATA</button>';
 
@@ -1731,6 +1731,7 @@
         infoSub('freeze', 'Streak Freeze',                 freezeBody) +
         infoSub('punish', 'The Punishment System',         punishmentBody) +
         infoSub('rest',   'The &quot;Rest&quot; Button',   restBody), { group: true }) +
+      infoSection('privacy',   'Privacy Policy',                privacyBody) +
       infoSection('danger',    'Danger Zone',                   dangerBody, { danger: true });
   }
 
@@ -1826,7 +1827,6 @@
     if (drawer) drawer.setAttribute('aria-hidden', open ? 'false' : 'true');
     const btn = document.getElementById('menu-btn');
     if (btn) btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-    // When closing, re-render the main app so profile edits show up on the Train page.
     if (!open) render();
     buzz(8);
   }
@@ -1914,7 +1914,6 @@
     const app = document.getElementById(id);
     if(!app) return;
     app.addEventListener('click', (e)=>{
-      // Profile bar / menu buttons
       const actionBtn = e.target.closest('[data-action]');
       if (actionBtn){
         const act = actionBtn.dataset.action;
@@ -1944,7 +1943,6 @@
           return;
         }
         if (act === 'delete-profile'){ deleteProfile(pid); return; }
-        // fall through for training actions
       }
       const head = e.target.closest('.info-head');
       if (head && head.dataset.section) {
@@ -1989,7 +1987,6 @@
     app.addEventListener('change', (e)=>{
       const t = e.target;
       if (!t) return;
-      // Profile editor: exercise checkbox
       if (t.matches && t.matches('input[type=checkbox][data-action="toggle-ex"]')){
         const p = getProfileById(t.dataset.profileId);
         const ex = t.dataset.ex;
@@ -2018,7 +2015,6 @@
         t.value = '';
       }
     });
-    // Live handlers while editing: name + goal override (persist without re-render)
     app.addEventListener('input', (e) => {
       const t = e.target;
       if (!t) return;
@@ -2095,7 +2091,6 @@
     const logDay = cycle.startDay;
     ensureEntry(logDay);
     if (frozenDays[logDay]) { buzz([8,40,8]); toast('[ FROZEN ] Stop the streak freeze first', 'warn'); return; }
-    // Stamp the running profile on the first data change of the cycle.
     if (!logs[logDay].profileId && activeProfileId) logs[logDay].profileId = activeProfileId;
     const goal = getGoalForExercise(type, logDay);
     const prevVal = logs[logDay][type] || 0;
