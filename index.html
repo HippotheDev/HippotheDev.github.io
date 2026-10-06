@@ -115,9 +115,9 @@
   @keyframes dangerPulse { 0%,100% { box-shadow: 0 0 30px var(--danger-glow), inset 0 0 15px var(--danger-glow); }
     50% { box-shadow: 0 0 60px var(--danger-glow), inset 0 0 30px var(--danger-glow); } }
   .train-grid .sys-panel-wrapper, .train-grid .sys-panel { clip-path: var(--panel-clip-lg); }
-  .quest-card .qhead { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .quest-card .qhead { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; gap: 10px; }
   .qhead .qname { font-family: 'Orbitron', sans-serif; font-size: 14px; font-weight: 700; letter-spacing: 0.15em;
-    color: var(--text); display: flex; align-items: center; gap: 10px; }
+    color: var(--text); display: flex; align-items: center; flex-wrap: nowrap; gap: 8px; }
   .qhead .qnum { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 700; color: var(--accent); text-shadow: 0 0 10px var(--accent-glow); }
   .qhead .qnum .goal { color: var(--text-dim); font-weight: 400; }
   .bar-track { height: 12px; background: var(--progress-track); border: 1px solid var(--line-dim); position: relative; overflow: hidden;
@@ -153,7 +153,8 @@
     box-shadow: 0 0 0 2px var(--accent-soft); }
 
   .cleared-tag { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
-    color: var(--gold); border: 1px solid var(--gold); background: rgba(255,215,0,0.15); padding: 2px 8px; margin-left: 8px;
+    color: var(--gold); border: 1px solid var(--gold); background: rgba(255,215,0,0.15); padding: 2px 8px;
+    white-space: nowrap; flex: 0 0 auto;
     box-shadow: 0 0 12px var(--gold-glow); }
   .undo-btn { width: 100%; margin: 14px 0 0; padding: 12px; font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700;
     letter-spacing: 0.1em; background: var(--accent-soft); border: 1px solid var(--line); color: var(--accent); cursor: pointer;
@@ -574,13 +575,13 @@
   .profile-item { padding: 12px; background: var(--panel2); border: 1px solid var(--line-dim); margin-bottom: 8px;
     clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px); }
   .profile-item.active { border-color: var(--accent); box-shadow: 0 0 12px var(--accent-glow); }
-  .profile-item-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
   .profile-item-name { font-family: 'Orbitron', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 0.08em;
-    color: var(--text); }
+    color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .profile-item-ex { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-dim); margin-top: 4px; word-break: break-word; }
-  .profile-item-btns { display: flex; gap: 6px; flex-shrink: 0; flex-wrap: wrap; }
-  .profile-item-btns button { padding: 5px 9px; font-family: 'JetBrains Mono', monospace; font-size: 10px;
+  .profile-item-btns { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 5px; margin-top: 10px; }
+  .profile-item-btns button { padding: 6px 2px; font-family: 'JetBrains Mono', monospace; font-size: 10px;
     font-weight: 700; cursor: pointer; background: var(--accent-soft); border: 1px solid var(--line); color: var(--accent);
+    white-space: nowrap; overflow: hidden; text-align: center;
     clip-path: polygon(3px 0, 100% 0, 100% calc(100% - 3px), calc(100% - 3px) 100%, 0 100%, 0 3px); }
   .profile-item-btns button.danger { background: rgba(255,0,85,0.1); border-color: var(--danger); color: var(--danger); }
   .profile-item-btns button:hover { background: var(--accent); color: var(--bg); }
@@ -663,8 +664,7 @@
     [data-theme="retro"] header.hud { padding-left: 12px; padding-right: 12px; }
   }
   .stat-grid .stat-item, [data-theme="retro"] .stat-grid .stat-item { text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-  .quest-card .qhead { gap: 10px; }
-  .quest-card .qhead .qname { flex: 1 1 auto; min-width: 0; overflow-wrap: anywhere; line-height: 1.25; }
+  .quest-card .qhead .qname { flex: 1 1 auto; min-width: 0; overflow-wrap: anywhere; line-height: 1.25; flex-wrap: nowrap; }
   .quest-card .qhead .qnum { flex: 0 0 auto; white-space: nowrap; margin-left: auto; }
 </style>
 </head>
@@ -700,10 +700,12 @@
   if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js'); }
 
   const DAILY_PENALTY = 400;
+  const REST_GRACE_CYCLES = 3;  /* consecutive rest-heavy cycles allowed before the rest penalty kicks in */
   const FREEZE_BUDGET_PER_MONTH = 1;
   const BACKUP_INTERVAL_DAYS = 14;
   const QUEST_WINDOW_HOURS = 48;
   const PRIVACY_URL = 'https://hippothedev.github.io/privacy.html';
+  const XP_PER_EXERCISE = 60;   /* total XP for fully completing ONE exercise (normal mode) */
 
   /* ---------- Exercise registry ---------- */
   const HARD_MULT = 5 / 3;
@@ -718,13 +720,120 @@
   ];
   const EXERCISE_REGISTRY = {
     steps:    { label:'STEPS',    cats:['basics'], goalType:'fixed', goal: 12000, xpMax: 100, stepDefault: 1000 },
-    pushups:  { label:'PUSH-UPS', cats:['arms','chest'], goalType:'mode', goal: BASE_REPS, stepDefault: 10 },
+    pushups:  { label:'PUSH-UPS', cats:['chest'], goalType:'mode', goal: BASE_REPS, stepDefault: 10 },
     squats:   { label:'SQUATS',   cats:['legs'],   goalType:'mode',  goal: BASE_REPS, stepDefault: 10 },
     crunches: { label:'CRUNCHES', cats:['abs'],    goalType:'mode',  goal: BASE_REPS, stepDefault: 10 }
   };
   (function addGuideExercises(){
-    const GUIDE = [["arms", "Push-ups", "Bodyweight staple for triceps and shoulders."], ["arms", "Diamond Push-ups", "Emphasizes the triceps."], ["arms", "Pike Push-ups", "Targets the shoulders and upper chest."], ["arms", "Dumbbell Bicep Curls", "Standard curl for bicep mass."], ["arms", "Dumbbell Hammer Curls", "Targets the brachialis and forearms."], ["arms", "Dumbbell Concentration Curls", "Isolates the bicep for peak contraction."], ["arms", "Dumbbell Overhead Tricep Extensions", "Stretches and builds the triceps."], ["arms", "Dumbbell Tricep Kickbacks", "Great isolation for the back of the arms."], ["arms", "Dumbbell Overhead Shoulder Press", "Builds overall shoulder size."], ["arms", "Dumbbell Lateral Raises", "Targets the side delts for wider shoulders."], ["arms", "Dumbbell Front Raises", "Focuses on the front deltoids."], ["arms", "Dumbbell Bent-Over Lateral Raises", "Targets the rear deltoids."], ["arms", "Chair Dips", "Bodyweight tricep burner using a sturdy chair or couch."], ["arms", "Arm Circles", "Great bodyweight warm-up for shoulder endurance."], ["arms", "Dumbbell Zottman Curls", "Combines standard curl up with reverse curl down for forearms."], ["arms", "Dumbbell Arnold Press", "Rotational press hitting all three shoulder heads."], ["arms", "Dumbbell Standing Wrist Curls", "Builds forearm strength."], ["arms", "Dumbbell Reverse Wrist Curls", "Targets the extensor muscles of the forearms."], ["arms", "Isometric Wall Push", "Bodyweight push against a wall for static arm strength."], ["arms", "Crab Walk", "Bodyweight movement working triceps and shoulders."], ["back", "Dumbbell Bent-Over Rows", "Classic compound movement for mid-back thickness."], ["back", "Dumbbell Single-Arm Rows", "Great for unilateral lat development."], ["back", "Dumbbell Renegade Rows", "Core and back challenge combined."], ["back", "Supermans", "Bodyweight lower back strengthener."], ["back", "Prone Y-Raises", "Targets lower traps and rear shoulders."], ["back", "Dumbbell Pullovers", "Expands the ribcage and targets lats/chest."], ["back", "Dumbbell Shrugs", "Builds upper traps."], ["back", "Reverse Snow Angels", "Bodyweight exercise for posture and upper back."], ["back", "Dumbbell Romanian Deadlifts", "Engages the entire posterior chain including lower back."], ["back", "Bird-Dog", "Bodyweight stabilization for lower back and core."], ["back", "Dumbbell Deadlifts", "Full-body pull heavily involving the back and traps."], ["back", "Inverted Table/Desk Rows", "Bodyweight pulling exercise using household furniture."], ["back", "Dumbbell Seal Rows", "Chest-supported row eliminating momentum."], ["back", "Back Extensions (Floor)", "Lift chest and legs simultaneously."], ["back", "Dumbbell Farmer's Carries", "Builds traps, grip, and upper back stability."], ["back", "Doorway Rows", "Bodyweight pull using a closed door frame safely."], ["back", "Dumbbell Upright Rows", "Targets traps and side delts."], ["back", "Scapular Push-ups", "Bodyweight movement focusing on shoulder blade retraction."], ["back", "Dumbbell Good Mornings", "Hip-hinge movement targeting the lower back and hamstrings."], ["back", "Prone Cobra", "Isometric hold for spinal erectors and posture."], ["chest", "Standard Push-ups", "Fundamental bodyweight chest builder."], ["chest", "Incline Push-ups", "Emphasizes the lower chest."], ["chest", "Decline Push-ups", "Shifts focus to the upper chest."], ["chest", "Wide-Grip Push-ups", "Targets the outer chest."], ["chest", "Dumbbell Floor Press", "Great chest press variation without needing a bench."], ["chest", "Dumbbell Flat Bench/Floor Flyes", "Isolates the pectoral muscles."], ["chest", "Dumbbell Squeeze Press", "Squeezes dumbbells together to maximize inner chest activation."], ["chest", "Dumbbell Decline Floor Press", "Simulates a decline press on the floor."], ["chest", "Dumbbell Incline Press (on floor/couch)", "Targets upper chest."], ["chest", "Chest Dips (between chairs)", "Compound movement for lower chest and triceps."], ["chest", "Dumbbell Pullovers", "Stretches and develops the ribcage and chest."], ["chest", "Plank-to-Push-up", "Dynamic bodyweight movement challenging chest and core."], ["chest", "Archer Push-ups", "Advanced unilateral chest bodyweight exercise."], ["chest", "Resistance Band/Dumbbell Cross-Body Flyes", "Unilateral contraction."], ["chest", "Hindu Push-ups", "Yoga-inspired flowing push-up for chest and shoulders."], ["chest", "Dumbbell Around-The-Worlds", "Arc movement working chest and shoulders."], ["chest", "Clapping Push-ups", "Plyometric bodyweight power builder."], ["chest", "Wall Chest Press", "Isometric bodyweight press."], ["chest", "Dumbbell Single-Arm Floor Press", "Anti-rotation and unilateral chest focus."], ["chest", "Spiderman Push-ups", "Combines a push-up with an oblique knee drive."], ["abs", "Standard Crunches", "Classic upper abdominal movement."], ["abs", "Bicycle Crunches", "Excellent for obliques and full core."], ["abs", "Russian Twists (with or without dumbbell)", "Targets rotational obliques."], ["abs", "Standard Planks", "Isometric total-core strengthener."], ["abs", "Side Planks", "Focuses on obliques and lateral stability."], ["abs", "Leg Raises (Floor)", "Targets lower abdominals."], ["abs", "Flutter Kicks", "Continuous lower abdominal endurance."], ["abs", "Mountain Climbers", "Dynamic core and cardio burner."], ["abs", "Dumbbell Weighted Crunches", "Adds resistance to standard crunches."], ["abs", "Dead Bug", "Bodyweight anti-extension core exercise."], ["abs", "V-Ups", "Advanced simultaneous upper and lower ab contraction."], ["abs", "Hollow Body Hold", "Gymnastics core staple."], ["abs", "Dumbbell Side Bends", "Targeted weighted oblique work."], ["abs", "Toe Touches", "Reaching for toes from a supine position."], ["abs", "Windshield Wipers (Floor)", "Advanced rotational lower ab movement."], ["abs", "Bear Crawl Hold", "Isometric deep core stabilizer."], ["abs", "Scissor Kicks", "Alternating lower body core movement."], ["abs", "Plank Hip Dips", "Dynamic oblique builder."], ["abs", "Reverse Crunches", "Lifts hips to focus on lower abs."], ["abs", "Dumbbell Woodchoppers", "Rotational power and oblique strength."], ["legs", "Bodyweight Squats", "Fundamental lower body movement."], ["legs", "Dumbbell Goblet Squats", "Deep quad and glute builder."], ["legs", "Walking Lunges (with or without dumbbells)", "Dynamic single-leg strength."], ["legs", "Bulgarian Split Squats (with or without dumbbells)", "Unilateral quad and glute destroyer."], ["legs", "Dumbbell Romanian Deadlifts", "Focuses heavily on hamstrings and glutes."], ["legs", "Glute Bridges (Bodyweight or Weighted)", "Isolates the glutes."], ["legs", "Single-Leg Glute Bridges", "Advanced unilateral glute activation."], ["legs", "Calf Raises (Bodyweight or with Dumbbells)", "Targets the gastrocnemius."], ["legs", "Seated Calf Raises (Dumbbells on knees)", "Targets the soleus."], ["legs", "Step-Ups (onto a sturdy chair/box)", "Functional leg strength."], ["legs", "Jump Squats", "Explosive bodyweight plyometric exercise."], ["legs", "Dumbbell Sumo Squats", "Emphasizes inner thighs (adductors) and glutes."], ["legs", "Side Lunges (with or without dumbbells)", "Targets lateral leg muscles and adductors."], ["legs", "Reverse Lunges", "Easier on the knees while building glutes/quads."], ["legs", "Nordic Hamstring Curls (assisted)", "Advanced bodyweight hamstring builder."], ["legs", "Donkey Kicks", "Bodyweight glute isolation."], ["legs", "Fire Hydrants", "Targets side glutes (abductors)."], ["legs", "Wall Sits", "Isometric quad burner."], ["legs", "Pistol Squats (Assisted/Bodyweight)", "Advanced single-leg squat."], ["legs", "Dumbbell Thrusters", "Combines a front squat with an overhead press for full-body power."]];
+    const GUIDE = [
+      ["arms", "Close-Grip Push-ups", "Hands inside shoulder width to hammer the triceps."],
+      ["arms", "Diamond Push-ups", "Emphasizes the triceps."],
+      ["arms", "Pike Push-ups", "Targets the shoulders and upper chest."],
+      ["arms", "Dumbbell Bicep Curls", "Standard curl for bicep mass."],
+      ["arms", "Dumbbell Hammer Curls", "Targets the brachialis and forearms."],
+      ["arms", "Dumbbell Concentration Curls", "Isolates the bicep for peak contraction."],
+      ["arms", "Dumbbell Overhead Tricep Extensions", "Stretches and builds the triceps."],
+      ["arms", "Dumbbell Tricep Kickbacks", "Great isolation for the back of the arms."],
+      ["arms", "Dumbbell Overhead Shoulder Press", "Builds overall shoulder size."],
+      ["arms", "Dumbbell Lateral Raises", "Targets the side delts for wider shoulders."],
+      ["arms", "Dumbbell Front Raises", "Focuses on the front deltoids."],
+      ["arms", "Dumbbell Bent-Over Lateral Raises", "Targets the rear deltoids."],
+      ["arms", "Chair Dips", "Bodyweight tricep burner using a sturdy chair or couch."],
+      ["arms", "Arm Circles", "Great bodyweight warm-up for shoulder endurance."],
+      ["arms", "Dumbbell Zottman Curls", "Combines standard curl up with reverse curl down for forearms."],
+      ["arms", "Dumbbell Arnold Press", "Rotational press hitting all three shoulder heads."],
+      ["arms", "Dumbbell Standing Wrist Curls", "Builds forearm strength."],
+      ["arms", "Dumbbell Reverse Wrist Curls", "Targets the extensor muscles of the forearms."],
+      ["arms", "Isometric Wall Push", "Bodyweight push against a wall for static arm strength."],
+      ["arms", "Crab Walk", "Bodyweight movement working triceps and shoulders."],
+      ["back", "Australian Pull-ups", "Horizontal bodyweight pull under a low bar or sturdy table edge."],
+      ["back", "Dumbbell Bent-Over Rows", "Classic compound movement for mid-back thickness."],
+      ["back", "Dumbbell Single-Arm Rows", "Great for unilateral lat development."],
+      ["back", "Dumbbell Renegade Rows", "Core and back challenge combined."],
+      ["back", "Supermans", "Bodyweight lower back strengthener."],
+      ["back", "Prone Y-Raises", "Targets lower traps and rear shoulders."],
+      ["back", "Dumbbell Pullovers", "Expands the ribcage and targets lats/chest."],
+      ["back", "Dumbbell Shrugs", "Builds upper traps."],
+      ["back", "Reverse Snow Angels", "Bodyweight exercise for posture and upper back."],
+      ["back", "Dumbbell Romanian Deadlifts", "Engages the entire posterior chain including lower back."],
+      ["back", "Bird-Dog", "Bodyweight stabilization for lower back and core."],
+      ["back", "Dumbbell Deadlifts", "Full-body pull heavily involving the back and traps."],
+      ["back", "Inverted Table/Desk Rows", "Bodyweight pulling exercise using household furniture."],
+      ["back", "Dumbbell Seal Rows", "Chest-supported row eliminating momentum."],
+      ["back", "Back Extensions (Floor)", "Lift chest and legs simultaneously."],
+      ["back", "Dumbbell Farmer's Carries", "Builds traps, grip, and upper back stability."],
+      ["back", "Doorway Rows", "Bodyweight pull using a closed door frame safely."],
+      ["back", "Dumbbell Upright Rows", "Targets traps and side delts."],
+      ["back", "Scapular Push-ups", "Bodyweight movement focusing on shoulder blade retraction."],
+      ["back", "Dumbbell Good Mornings", "Hip-hinge movement targeting the lower back and hamstrings."],
+      ["back", "Prone Cobra", "Isometric hold for spinal erectors and posture."],
+      ["chest", "Standard Push-ups", "Fundamental bodyweight chest builder."],
+      ["chest", "Incline Push-ups", "Emphasizes the lower chest."],
+      ["chest", "Decline Push-ups", "Shifts focus to the upper chest."],
+      ["chest", "Wide-Grip Push-ups", "Targets the outer chest."],
+      ["chest", "Dumbbell Floor Press", "Great chest press variation without needing a bench."],
+      ["chest", "Dumbbell Flat Bench/Floor Flyes", "Isolates the pectoral muscles."],
+      ["chest", "Dumbbell Squeeze Press", "Squeezes dumbbells together to maximize inner chest activation."],
+      ["chest", "Dumbbell Decline Floor Press", "Simulates a decline press on the floor."],
+      ["chest", "Dumbbell Incline Press (on floor/couch)", "Targets upper chest."],
+      ["chest", "Chest Dips (between chairs)", "Compound movement for lower chest and triceps."],
+      ["chest", "Dumbbell Pullovers", "Stretches and develops the ribcage and chest."],
+      ["chest", "Plank-to-Push-up", "Dynamic bodyweight movement challenging chest and core."],
+      ["chest", "Archer Push-ups", "Advanced unilateral chest bodyweight exercise."],
+      ["chest", "Resistance Band/Dumbbell Cross-Body Flyes", "Unilateral contraction."],
+      ["chest", "Hindu Push-ups", "Yoga-inspired flowing push-up for chest and shoulders."],
+      ["chest", "Dumbbell Around-The-Worlds", "Arc movement working chest and shoulders."],
+      ["chest", "Clapping Push-ups", "Plyometric bodyweight power builder."],
+      ["chest", "Wall Chest Press", "Isometric bodyweight press."],
+      ["chest", "Dumbbell Single-Arm Floor Press", "Anti-rotation and unilateral chest focus."],
+      ["chest", "Spiderman Push-ups", "Combines a push-up with an oblique knee drive."],
+      ["abs", "Standard Crunches", "Classic upper abdominal movement."],
+      ["abs", "Bicycle Crunches", "Excellent for obliques and full core."],
+      ["abs", "Russian Twists (with or without dumbbell)", "Targets rotational obliques."],
+      ["abs", "Standard Planks", "Isometric total-core strengthener."],
+      ["abs", "Side Planks", "Focuses on obliques and lateral stability."],
+      ["abs", "Leg Raises (Floor)", "Targets lower abdominals."],
+      ["abs", "Flutter Kicks", "Continuous lower abdominal endurance."],
+      ["abs", "Mountain Climbers", "Dynamic core and cardio burner."],
+      ["abs", "Dumbbell Weighted Crunches", "Adds resistance to standard crunches."],
+      ["abs", "Dead Bug", "Bodyweight anti-extension core exercise."],
+      ["abs", "V-Ups", "Advanced simultaneous upper and lower ab contraction."],
+      ["abs", "Hollow Body Hold", "Gymnastics core staple."],
+      ["abs", "Dumbbell Side Bends", "Targeted weighted oblique work."],
+      ["abs", "Toe Touches", "Reaching for toes from a supine position."],
+      ["abs", "Windshield Wipers (Floor)", "Advanced rotational lower ab movement."],
+      ["abs", "Bear Crawl Hold", "Isometric deep core stabilizer."],
+      ["abs", "Scissor Kicks", "Alternating lower body core movement."],
+      ["abs", "Plank Hip Dips", "Dynamic oblique builder."],
+      ["abs", "Reverse Crunches", "Lifts hips to focus on lower abs."],
+      ["abs", "Dumbbell Woodchoppers", "Rotational power and oblique strength."],
+      ["legs", "Bodyweight Squats", "Fundamental lower body movement."],
+      ["legs", "Dumbbell Goblet Squats", "Deep quad and glute builder."],
+      ["legs", "Walking Lunges (with or without dumbbells)", "Dynamic single-leg strength."],
+      ["legs", "Bulgarian Split Squats (with or without dumbbells)", "Unilateral quad and glute destroyer."],
+      ["legs", "Dumbbell Romanian Deadlifts", "Focuses heavily on hamstrings and glutes."],
+      ["legs", "Glute Bridges (Bodyweight or Weighted)", "Isolates the glutes."],
+      ["legs", "Single-Leg Glute Bridges", "Advanced unilateral glute activation."],
+      ["legs", "Calf Raises (Bodyweight or with Dumbbells)", "Targets the gastrocnemius."],
+      ["legs", "Seated Calf Raises (Dumbbells on knees)", "Targets the soleus."],
+      ["legs", "Step-Ups (onto a sturdy chair/box)", "Functional leg strength."],
+      ["legs", "Jump Squats", "Explosive bodyweight plyometric exercise."],
+      ["legs", "Dumbbell Sumo Squats", "Emphasizes inner thighs (adductors) and glutes."],
+      ["legs", "Side Lunges (with or without dumbbells)", "Targets lateral leg muscles and adductors."],
+      ["legs", "Reverse Lunges", "Easier on the knees while building glutes/quads."],
+      ["legs", "Nordic Hamstring Curls (assisted)", "Advanced bodyweight hamstring builder."],
+      ["legs", "Donkey Kicks", "Bodyweight glute isolation."],
+      ["legs", "Fire Hydrants", "Targets side glutes (abductors)."],
+      ["legs", "Wall Sits", "Isometric quad burner."],
+      ["legs", "Pistol Squats (Assisted/Bodyweight)", "Advanced single-leg squat."],
+      ["legs", "Dumbbell Thrusters", "Combines a front squat with an overhead press for full-body power."]
+    ];
     const ALIAS = { 'push-ups':'pushups', 'standard push-ups':'pushups', 'bodyweight squats':'squats', 'standard crunches':'crunches' };
+    /* Display labels get shortened, but KEYS stay derived from the original
+       names so existing saved data keeps working. */
+    function displayLabel(name){
+      return name.toUpperCase().replace(/DUMBBELLS/g, 'DUM.').replace(/DUMBBELL/g, 'DUM.');
+    }
     const seen = {};
     GUIDE.forEach(function(it){
       const cat = it[0], name = it[1], desc = it[2];
@@ -739,7 +848,7 @@
       }
       key = 'x_' + norm.replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
       seen[norm] = key;
-      EXERCISE_REGISTRY[key] = { label: name.toUpperCase(), cats:[cat], desc: desc, goalType:'mode', goal: BASE_REPS, stepDefault: 10 };
+      EXERCISE_REGISTRY[key] = { label: displayLabel(name), cats:[cat], desc: desc, goalType:'mode', goal: BASE_REPS, stepDefault: 10 };
     });
   })();
   const MAX_PROFILES = 5;
@@ -834,14 +943,17 @@
   function defaultExercises(){ return ['steps','pushups','squats','crunches',REVERSE_WRIST_KEY]; }
   function getProfileById(id){ return profiles.find(p => p.id === id) || null; }
   function getActiveProfile(){ return getProfileById(activeProfileId) || profiles[0] || null; }
+
+  /* The current cycle ALWAYS follows the active profile, so profiles can be
+     swapped at any time. Past cycles are frozen via their exSnapshot. */
   function getProfileForDay(dk){
-    if (logs[dk] && logs[dk].profileId){
-      const p = getProfileById(logs[dk].profileId);
+    const c = getCurrentCycle();
+    if (c && dk === c.startDay){
+      const p = getProfileById(activeProfileId);
       if (p) return p;
     }
-    const c = getCurrentCycle();
-    if (c && c.startDay === dk){
-      const p = getProfileById(activeProfileId);
+    if (logs[dk] && logs[dk].profileId){
+      const p = getProfileById(logs[dk].profileId);
       if (p) return p;
     }
     return profiles[0] || null;
@@ -857,8 +969,10 @@
     return first;
   }
   function getActiveExercises(dk){
+    const c = getCurrentCycle();
+    const isCurrentCycle = !!(c && dk === c.startDay);
     const e = logs[dk];
-    if (e && Array.isArray(e.exSnapshot)) return e.exSnapshot.filter(x => EXERCISE_REGISTRY[x]);
+    if (!isCurrentCycle && e && Array.isArray(e.exSnapshot)) return e.exSnapshot.filter(x => EXERCISE_REGISTRY[x]);
     const p = getProfileForDay(dk);
     let list = p ? p.exercises.filter(x => EXERCISE_REGISTRY[x]) : [];
     if (isLegacyDay(dk)){
@@ -905,17 +1019,28 @@
     }
     return Math.max(1, Math.round(getBaseGoal(type, dk) * getModeMult(dk)));
   }
+
+  /* ===== XP MODEL =====
+     Every exercise has a TOTAL reward for fully completing its quota:
+        normal : 60 XP
+        hard   : 60 * 5/3 = 100 XP
+     XP is earned PROGRESSIVELY, in proportion to how much of the quota you
+     have logged:
+        xp = (value / goal) * total
+     So 1,000 of 12,000 steps = 60 * 1000/12000 = 5 XP,
+        3,000 of 12,000 steps = 15 XP,
+     and finishing the quota banks the full 60.
+     The rank multiplier is applied on top of this (see computeXPTimeline). */
+  function getExerciseTotalXP(type, dk){
+    return Math.round(XP_PER_EXERCISE * getModeMult(dk) * 100) / 100;
+  }
+  /* Kept for legacy (pre-cutover) days only. */
   function getMaxXPForExercise(type, dk){
     const reg = EXERCISE_REGISTRY[type];
     if (!reg) return 100;
-    if (isLegacyDay(dk)){
-      const lf = legacyFixed(type);
-      if (lf) return lf.xp;
-      return getModeForDate(dk) === 'hard' ? 100 : 60;
-    }
-    if (reg.goalType === 'mode') return getGoalForExercise(type, dk);
-    const xpBase = reg.xpMax !== undefined ? reg.xpMax : reg.goal;
-    return Math.round(xpBase * getModeMult(dk) * 100) / 100;
+    const lf = legacyFixed(type);
+    if (lf) return lf.xp;
+    return getModeForDate(dk) === 'hard' ? 100 : 60;
   }
   function getStepAmount(type){
     const pref = stepPrefs[type];
@@ -1019,24 +1144,58 @@
     return changed;
   }
 
+  /* ---------- XP: proportional model ---------- */
   function dayXP(key){
     if(frozenDays[key]) return 0;
     if(penalties[key]) return -DAILY_PENALTY;
     const entry = logs[key];
     if(!entry) return 0;
-    let sum = 0;
     const rested = entry.restedTypes || [];
     const goals = getGoalsForDate(key);
+    let sum = 0;
+    if (isLegacyDay(key)){
+      /* legacy proportional model using the old per-exercise maxXP */
+      for(const type in goals){
+        const v = entry[type] || 0;
+        if (rested.includes(type)) continue;
+        const goal = goals[type];
+        const maxXP = getMaxXPForExercise(type, key);
+        sum += Math.min(v, goal) / goal * maxXP;
+      }
+      return sum;
+    }
+    /* new model: value / goal * totalExerciseXP, capped at the total */
     for(const type in goals){
-      const v = entry[type] || 0;
       if (rested.includes(type)) continue;
+      const v = entry[type] || 0;
       const goal = goals[type];
-      const maxXP = getMaxXPForExercise(type, key);
-      sum += Math.min(v, goal) / goal * maxXP;
+      const totalXP = getExerciseTotalXP(type, key);
+      const progressed = Math.min(v, goal) / goal;
+      sum += progressed * totalXP;
     }
     return sum;
   }
   function getMultiplierForRank(rank){ return RANK_MULTIPLIERS[rank] || 1.0; }
+
+  /* Converts raw XP into effective XP, switching to the new rank's multiplier
+     the moment a rank boundary is crossed (even mid-day / mid-input). */
+  const RANK_START_LEVELS = [['E',1],['D',5],['C',10],['B',15],['A',25],['S',40],['SS',65],['Monarch',99]];
+  function applyRankMultiplier(startXP, raw){
+    if (raw <= 0) return raw * getMultiplierForRank(rankOf(calcLevel(startXP).level));
+    let pos = startXP, remaining = raw, gained = 0, guard = 0;
+    while (remaining > 1e-9 && guard++ < 20){
+      const rank = rankOf(calcLevel(pos).level);
+      const mult = getMultiplierForRank(rank);
+      const idx = RANK_START_LEVELS.findIndex(r => r[0] === rank);
+      const next = RANK_START_LEVELS[idx + 1];
+      if (!next){ gained += remaining * mult; break; }
+      const room = totalXpForLevel(next[1]) - pos;   /* effective XP left in this rank */
+      const rawNeeded = room / mult;
+      if (remaining <= rawNeeded){ gained += remaining * mult; break; }
+      gained += room; remaining -= rawNeeded; pos += room;
+    }
+    return gained;
+  }
 
   let _timelineCache = null, _timelineDirty = true;
   function markTimelineDirty(){ _timelineDirty = true; }
@@ -1044,18 +1203,35 @@
     if (!_timelineDirty && _timelineCache) return _timelineCache;
     const days = Array.from(new Set([...Object.keys(logs), ...Object.keys(penalties), ...Object.keys(frozenDays)])).sort();
     let cumulative = 0, total = 0;
-    const perDay = {}, rankPerDay = {};
+    const perDay = {}, rankPerDay = {}, restPenalty = {}, restHeavy = {}, restStreakPerDay = {};
+    let restStreak = 0;
     for(const k of days){
-      const raw = dayXP(k);
+      let raw = dayXP(k);
+      /* Rest-heavy streak: >50% of exercises rested = rest-heavy cycle; >50% truly done resets the streak.
+         Frozen / failed cycles neither add to nor reset it. */
+      if (!frozenDays[k] && !penalties[k] && logs[k]){
+        const active = getActiveExercises(k), n = active.length;
+        if (n > 0){
+          const entry = logs[k], rested = entry.restedTypes || [];
+          const restedCount = active.filter(t => rested.includes(t)).length;
+          const doneCount = active.filter(t => !rested.includes(t) && (entry[t] || 0) >= getGoalForExercise(t, k)).length;
+          if (restedCount * 2 > n){
+            restStreak++; restHeavy[k] = true;
+            if (restStreak > REST_GRACE_CYCLES){ restPenalty[k] = true; raw -= DAILY_PENALTY; }
+          } else if (doneCount * 2 > n){
+            restStreak = 0;
+          }
+        }
+      }
+      restStreakPerDay[k] = restStreak;
       const rankBefore = rankOf(calcLevel(cumulative).level);
-      const mult = getMultiplierForRank(rankBefore);
-      const effective = raw * mult;
+      const effective = applyRankMultiplier(cumulative, raw);
       perDay[k] = effective;
       rankPerDay[k] = rankBefore;
       cumulative += effective;
       total += effective;
     }
-    _timelineCache = { perDay, rankPerDay, total };
+    _timelineCache = { perDay, rankPerDay, total, restPenalty, restHeavy, restStreakPerDay, restStreak };
     _timelineDirty = false;
     return _timelineCache;
   }
@@ -1420,14 +1596,7 @@
       }
     }
     html += '</div>';
-    const c = getCurrentCycle();
-    if (c && logs[c.startDay] && logs[c.startDay].profileId){
-      const locked = getProfileById(logs[c.startDay].profileId);
-      const active = getActiveProfile();
-      if (locked && active && locked.id !== active.id){
-        html += '<div class="profile-bar-note">This cycle runs <b>' + escapeHtml(locked.name) + '</b> · <b>' + escapeHtml(active.name) + '</b> starts next cycle</div>';
-      }
-    }
+    html += '<div class="profile-bar-note">Tap a profile to switch right away — shared exercises keep their progress, removed ones reset to 0.</div>';
     html += '</div>';
     return html;
   }
@@ -1517,7 +1686,8 @@
       const rested = entry.restedTypes || [];
       const restedCount = active.filter(t => rested.includes(t)).length;
       const xp = Math.round(timeline.perDay[logDay] || 0);
-      const xpStr = ' · ' + (xp > 0 ? '+' : '') + xp + ' XP';
+      const xpStr = (timeline.restPenalty[logDay] ? ' · ⚠ rest penalty' : '') + ' · ' + (xp > 0 ? '+' : '') + xp + ' XP';
+      if (timeline.restPenalty[logDay]) return { cls: 'incomplete', tip: '✗ Too much rest — penalty' + xpStr };
       if (active.length > 0 && restedCount === active.length) return { cls: 'rested', tip: '○ Full rest cycle' };
       if (isDayComplete(logDay, entry)) return restedCount > active.length / 2
         ? { cls: 'partial', tip: '◐ Cycle partial (mostly rest)' + xpStr }
@@ -1582,6 +1752,7 @@
       let tagLine = '';
       if (frozen) tagLine = '<div class="frozen-tag">CYCLE FREEZE USED — NO PENALTY, NO XP</div>';
       else if (failed) tagLine = '<div class="fail-tag">CYCLE FAILED — 48H WINDOW EXPIRED</div>';
+      if (timeline.restPenalty[k]) tagLine += '<div class="fail-tag">REST PENALTY — TOO MANY REST-HEAVY CYCLES IN A ROW</div>';
       if (prof) tagLine += '<div class="frozen-tag" style="border-color:var(--line-dim);color:var(--text-dim);background:var(--accent-soft);box-shadow:none;">PROFILE: ' + escapeHtml(prof.name) + '</div>';
       out += sysPanel('<div class="ldate">'+fmtDate(k)+' <span class="dow">'+dowOf(k)+'</span><span class="xp '+xpCls+'">'+(xp>=0?'+':'')+xp+' XP</span></div>'+tagLine+'<div class="log-grid">'+items+'</div>', 'log-day');
     }
@@ -1589,7 +1760,7 @@
   }
 
   function renderProfilesPanel(){
-    let out = '<div class="info-desc">Create up to ' + MAX_PROFILES + ' training profiles. The active profile decides which exercises appear on the Train page. Pick exercises by category and type your own max — leave blank to use the default.</div>';
+    let out = '<div class="info-desc">Create up to ' + MAX_PROFILES + ' training profiles. The active profile decides which exercises appear on the Train page, and you can switch it at any time — even mid-cycle. Shared exercises keep their logged progress; exercises that leave the profile are reset to 0.</div>';
     if (!profiles.length){
       out += '<div class="info-desc" style="color:var(--text-dim);">No profiles yet.</div>';
     }
@@ -1608,19 +1779,18 @@
           }).join(' · ')
         : '<i>no exercises</i>';
       const pendingDelete = deletingProfileId === p.id;
+      const canUp = pIdx > 0;
+      const canDown = pIdx < profiles.length - 1;
+      const hide = ' tabindex="-1" aria-hidden="true" style="visibility:hidden"';
       out += '<div class="profile-item' + (isActive ? ' active' : '') + '">' +
-        '<div class="profile-item-head">' +
-          '<div style="min-width:0;flex:1;">' +
-            '<div class="profile-item-name">' + escapeHtml(p.name) + (isActive ? ' · ACTIVE' : '') + '</div>' +
-            '<div class="profile-item-ex">' + exLabels + '</div>' +
-          '</div>' +
-          '<div class="profile-item-btns">' +
-            (!isActive ? '<button type="button" data-action="activate-profile" data-profile-id="' + p.id + '">Use</button>' : '<button type="button" tabindex="-1" aria-hidden="true" style="visibility:hidden">Use</button>') +
-            '<button type="button" data-action="move-profile-up" data-profile-id="' + p.id + '" aria-label="Move up"' + (pIdx > 0 ? '' : ' tabindex="-1" aria-hidden="true" style="visibility:hidden"') + '>▲</button>' +
-            '<button type="button" data-action="move-profile-down" data-profile-id="' + p.id + '" aria-label="Move down"' + (pIdx < profiles.length - 1 ? '' : ' tabindex="-1" aria-hidden="true" style="visibility:hidden"') + '>▼</button>' +
-            '<button type="button" data-action="edit-profile" data-profile-id="' + p.id + '">Edit</button>' +
-            '<button type="button" class="danger" data-action="delete-profile" data-profile-id="' + p.id + '">' + (pendingDelete ? 'Sure?' : 'Del') + '</button>' +
-          '</div>' +
+        '<div class="profile-item-name">' + escapeHtml(p.name) + (isActive ? ' · ACTIVE' : '') + '</div>' +
+        '<div class="profile-item-ex">' + exLabels + '</div>' +
+        '<div class="profile-item-btns">' +
+          '<button type="button" data-action="activate-profile" data-profile-id="' + p.id + '"' + (isActive ? hide : '') + '>Use</button>' +
+          '<button type="button" data-action="move-profile-up" data-profile-id="' + p.id + '" aria-label="Move up"' + (canUp ? '' : hide) + '>▲</button>' +
+          '<button type="button" data-action="move-profile-down" data-profile-id="' + p.id + '" aria-label="Move down"' + (canDown ? '' : hide) + '>▼</button>' +
+          '<button type="button" data-action="edit-profile" data-profile-id="' + p.id + '">Edit</button>' +
+          '<button type="button" class="danger" data-action="delete-profile" data-profile-id="' + p.id + '">' + (pendingDelete ? 'Sure?' : 'Del') + '</button>' +
         '</div>' +
       '</div>';
     });
@@ -1653,7 +1823,7 @@
       '<label>Profile name</label>' +
       '<input type="text" data-action="rename-profile" data-profile-id="' + p.id + '" value="' + escapeHtml(p.name) + '" maxlength="20" placeholder="e.g. Total Body">' +
       '<label>Pick exercises by category · type your max (normal mode)</label>' +
-      '<div class="info-desc" style="margin-bottom:8px;">The number box is your maximum for the cycle and also your max XP for that exercise. Leave blank for the default. Hard mode increases the max and XP by 5/3, nearly doubling the training.</div>' +
+      '<div class="info-desc" style="margin-bottom:8px;">The number box is your max for the cycle (blank = default). Hard mode raises it by 5/3.</div>' +
       exRows +
       '<div class="profile-editor-actions">' +
         '<button type="button" data-action="save-profile" data-profile-id="' + p.id + '">DONE</button>' +
@@ -1674,51 +1844,52 @@
       rankRows += '<tr><td style="color:'+getRankColor(r)+'; font-weight:700;">'+r+'</td><td>Lvl '+levels[r]+'</td><td>'+startXP.toLocaleString()+' XP</td><td>'+percentageOfTotal+'%</td><td>'+getMultiplierForRank(r)+'x</td></tr>';
     }
 
-    const themeBody = '<div class="info-desc">Switch the HUD between the obsidian Cyber interface and the orange Retro skin. Your choice is saved on this device.</div>'+
+    const themeBody = '<div class="info-desc">Switch between the Cyber and Retro skins.</div>'+
       '<div class="theme-toggle">'+
         '<button class="theme-btn'+(theme==='dark' ? ' active' : '')+'" id="theme-dark-btn" data-theme-choice="dark"><span class="ic"><svg viewBox="0 0 24 24" fill="none"><path d="M20.5 14.2A8.5 8.5 0 1 1 9.8 3.5a7 7 0 0 0 10.7 10.7Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></span>Cyber</button>'+
         '<button class="theme-btn'+(theme==='retro' ? ' active' : '')+'" id="theme-retro-btn" data-theme-choice="retro"><span class="ic"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4.5" width="18" height="12.5" rx="1.5" stroke="currentColor" stroke-width="1.6"/><path d="M7 8.8l2.6 2.2L7 13.2M12 13.2h4.5M9 20.5h6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Retro</button>'+
       '</div>';
 
-    const modeBody = '<div class="info-desc">Normal mode uses the max you set for each exercise (default ' + BASE_REPS + ' reps, 12,000 steps) and awards XP up to that max. Hard mode increases every goal and every XP by 5/3, nearly doubling the training. The choice applies to the current cycle.</div>'+
+    const modeBody = '<div class="info-desc">Each exercise pays <b>' + XP_PER_EXERCISE + ' XP</b> for its full quota, earned progressively as you log reps (e.g. 3,000 of 12,000 steps = 15 XP).</div>'+
+      '<div class="info-desc">Hard mode raises every quota and payout by 5/3 (' + (Math.round(XP_PER_EXERCISE * 5 / 3 * 100) / 100) + ' XP). All XP is then multiplied by your rank multiplier.</div>'+
       '<div class="theme-toggle">'+
         '<button class="theme-btn'+(getModeForDate((getCurrentCycle()||{}).startDay||todayKey())==='normal' ? ' active' : '')+'" data-mode-choice="normal">Normal</button>'+
         '<button class="theme-btn'+(getModeForDate((getCurrentCycle()||{}).startDay||todayKey())==='hard' ? ' active' : '')+'" data-mode-choice="hard">Hard</button>'+
       '</div>';
 
-    const rankBody = '<div class="info-desc">Percentage represents total rank progress scaled against the max rank threshold (Monarch). Higher ranks award increased XP multipliers!</div>'+
+    const rankBody = '<div class="info-desc">Higher ranks multiply all XP you earn (and lose).</div>'+
       '<table class="info-rank-table"><thead><tr><th>Rank</th><th>Level</th><th>XP</th><th>Prog.</th><th>Mult</th></tr></thead><tbody>'+rankRows+'</tbody></table>';
 
-    const punishmentBody = '<div class="info-desc">Each quest is a <b>' + QUEST_WINDOW_HOURS + '-hour cycle</b>. If the window closes without all mandatory exercise quotas being met, the cycle is flagged as <b>FAILED</b>.</div>'+
-      '<div class="info-desc" style="color:var(--danger);"><b>PUNISHMENT DETAILS:</b> You are penalized exactly <b>-' + DAILY_PENALTY + ' XP</b> for every missed cycle. The system checks expired windows automatically.</div>';
+    const punishmentBody = '<div class="info-desc">Each quest is a <b>' + QUEST_WINDOW_HOURS + '-hour cycle</b>. If it closes without all quotas met, it is <b>FAILED</b>.</div>'+
+      '<div class="info-desc" style="color:var(--danger);"><b>PENALTY:</b> <b>-' + DAILY_PENALTY + ' XP</b> per missed cycle, multiplied by your rank multiplier.</div>';
 
-    const freezeBody = '<div class="info-desc">A safety valve for stretches when training is impossible (illness, travel). You get <b>' + FREEZE_BUDGET_PER_MONTH + ' freeze per calendar month</b>, refreshed on the 1st.</div>'+
-      '<div class="info-desc">• Activate it once and it <b>stays on, cycle after cycle, until you stop it</b>. Every frozen cycle is protected from the penalty.</div>'+
-      '<div class="info-desc">• Frozen cycles award <b>0 XP</b> — nothing gained, nothing lost — and <b>count toward your streak</b>.</div>'+
-      '<div class="info-desc">• While frozen you cannot log training. Stop the freeze to resume: the current cycle becomes active again with whatever time is left on its timer, so stopping right after a new cycle starts gives you the most room.</div>'+
-      '<div class="info-desc">• The freeze counts for the month you <b>activate</b> it, however long it lasts. Cancelling it within the same cycle refunds it; stopping it later does not.</div>'+
-      '<div class="info-desc" style="margin-top:10px;">Freezes used this month: <b>' + getFreezesUsedThisMonth() + ' / ' + FREEZE_BUDGET_PER_MONTH + '</b>' + (freezeActiveSince ? ' · <b>Active since ' + fmtDateShort(freezeActiveSince) + ' (cycle ' + freezeCycleNumber() + ')</b>' : '') + '</div>';
+    const freezeBody = '<div class="info-desc">For stretches when training is impossible. You get <b>' + FREEZE_BUDGET_PER_MONTH + ' freeze per month</b>, refreshed on the 1st.</div>'+
+      '<div class="info-desc">• Stays on, cycle after cycle, until you stop it.</div>'+
+      '<div class="info-desc">• Frozen cycles give <b>0 XP</b>, no penalty, and keep your streak.</div>'+
+      '<div class="info-desc">• You can\'t log while frozen. Stopping resumes the current cycle with its remaining time.</div>'+
+      '<div class="info-desc">• It counts for the month you activate it. Cancelling within the same cycle refunds it.</div>'+
+      '<div class="info-desc" style="margin-top:10px;">Used this month: <b>' + getFreezesUsedThisMonth() + ' / ' + FREEZE_BUDGET_PER_MONTH + '</b>' + (freezeActiveSince ? ' · <b>Active since ' + fmtDateShort(freezeActiveSince) + ' (cycle ' + freezeCycleNumber() + ')</b>' : '') + '</div>';
 
-    const restBody = '<div class="info-desc">Taking care of your physical body is vital for survival. The <b>Rest</b> button allows you to take an intentional break on individual exercises.</div>'+
-      '<div class="info-desc">• Marks the chosen exercise activity as complete for the current cycle without incurring a daily penalty.</div>'+
-      '<div class="info-desc">• Gives <b>0 XP</b> for the rested exercise quota.</div>'+
-      '<div class="info-desc">• Clicking <b>Rest</b> again toggles off rest mode and resets that exercise to 0.</div>';
+    const restBody = '<div class="info-desc">The <b>Rest</b> button lets you take an intentional break on a single exercise.</div>'+
+      '<div class="info-desc">• Counts as complete, with no penalty, but gives <b>0 XP</b>.</div>'+
+      '<div class="info-desc">• Tap <b>Rest</b> again to undo it (the exercise resets to 0).</div>'+
+      '<div class="info-desc" style="color:var(--danger);">• <b>Rest limit:</b> a cycle with more than 50% of exercises rested is rest-heavy. After <b>' + REST_GRACE_CYCLES + ' in a row</b>, each further one also costs the <b>-' + DAILY_PENALTY + ' XP</b> penalty. Completing more than 50% of exercises resets the count.</div>';
 
     const bstate = backupState();
-    const backupBody = '<div class="info-desc">All progress lives only on this device. Export a backup file regularly, especially before reinstalling the app or switching devices — a cleared browser/app storage means lost progress with no other recovery.</div>'+
+    const backupBody = '<div class="info-desc">Progress lives only on this device. Export a backup regularly, especially before reinstalling or switching devices.</div>'+
       '<div style="display:flex; gap:8px; margin-top:6px; flex-wrap: wrap;">'+
         '<button id="data-export-btn" class="data-io-btn">Export Backup</button>'+
         '<button id="data-import-btn" class="data-io-btn">Import Backup</button>'+
         '<input type="file" id="data-import-input" accept="application/json" style="display:none;">'+
       '</div>'+
       '<div class="backup-status '+bstate.level+'">'+bstate.text+'</div>'+
-      '<div class="data-io-status">Importing a backup replaces your current logs, penalties, and profile name.</div>';
+      '<div class="data-io-status">Importing replaces your current logs, penalties, and name.</div>';
 
-    const privacyBody = '<div class="info-desc">Read the full privacy policy for Awakening Path. The short version: the app collects no personal data — everything you enter stays on this device.</div>' +
+    const privacyBody = '<div class="info-desc">The app collects no personal data. Everything stays on this device.</div>' +
       '<a class="data-io-btn data-io-link" href="' + PRIVACY_URL + '" target="_blank" rel="noopener noreferrer">OPEN PRIVACY POLICY ↗</a>' +
-      '<div class="data-io-status">Opens in your browser at ' + PRIVACY_URL + '</div>';
+      '<div class="data-io-status">Opens in your browser</div>';
 
-    const dangerBody = '<div class="info-desc">Wipe all local records, daily logs, streaks, and user profile parameters to permanently restart your progress.</div>'+
+    const dangerBody = '<div class="info-desc">Permanently erases all logs, streaks and profile data.</div>'+
       '<button class="reset-btn" id="reset-btn">RESET ALL DATA</button>';
 
     return infoSection('profiles',  'Training Profiles',             renderProfilesPanel()) +
@@ -1869,17 +2040,39 @@
   }
 
   /* ---------- Profile actions ---------- */
+  /* Switching profiles is now allowed at ANY moment, including mid-cycle.
+     - exercises present in both profiles keep their logged value / rest state
+     - exercises that leave the profile are nullified (value 0, rest cleared)
+     - exercises that join start from 0                                        */
   async function setActiveProfile(id){
     const p = getProfileById(id);
     if (!p) return;
-    const c = getCurrentCycle();
-    const locked = c && logs[c.startDay] && logs[c.startDay].profileId;
-    const lockedId = locked ? logs[c.startDay].profileId : null;
-    const lockedProf = lockedId ? getProfileById(lockedId) : null;
-    activeProfileId = id;
+    const changed = p.id !== activeProfileId;
+    activeProfileId = p.id;
     saveActiveProfileId();
-    if (lockedProf && lockedProf.id !== id){
-      toast('Profile set to ' + p.name + ' — applies next cycle', 'clear');
+
+    let removedCount = 0;
+    const c = getCurrentCycle();
+    if (changed && c){
+      const logDay = c.startDay;
+      const entry = logs[logDay];
+      if (entry){
+        const valid = p.exercises.filter(x => EXERCISE_REGISTRY[x]);
+        for (const t of Object.keys(EXERCISE_REGISTRY)){
+          if (valid.indexOf(t) >= 0) continue;
+          const had = (entry[t] || 0) > 0 || (Array.isArray(entry.restedTypes) && entry.restedTypes.indexOf(t) >= 0);
+          if (had) removedCount++;
+          entry[t] = 0;
+        }
+        if (Array.isArray(entry.restedTypes)) entry.restedTypes = entry.restedTypes.filter(x => valid.indexOf(x) >= 0);
+        delete entry.exSnapshot;
+        entry.profileId = p.id;
+        await saveLogs();
+      }
+    }
+    buzz(8);
+    if (removedCount > 0){
+      toast('[ SWITCHED ] ' + p.name + ' · ' + removedCount + ' exercise' + (removedCount === 1 ? '' : 's') + ' reset to 0', 'clear');
     } else {
       toast('Profile: ' + p.name, 'clear');
     }
@@ -2083,6 +2276,13 @@
     render();
   }
 
+  /* helper: pretty-print XP deltas (may be fractional) */
+  function fmtXP(v){
+    const r = Math.round(v * 100) / 100;
+    if (Number.isInteger(r)) return String(r);
+    return r.toFixed(2).replace(/0+$/, '').replace(/\.$/, '');
+  }
+
   async function handleAdd(type, amt, action){
     syncFreeze();
     action = action || 'add';
@@ -2112,7 +2312,10 @@
         if (!logs[logDay].restedTypes.includes(type)) logs[logDay].restedTypes.push(type);
         await saveLogs();
         buzz(12);
-        toast('[ REST ] '+LABELS[type]+' cleared (0 XP)', 'clear');
+        const rp = computeXPTimeline();
+        if (rp.restPenalty[logDay]) toast('[ REST ] '+LABELS[type]+' cleared  ·  REST PENALTY applied', 'warn');
+        else if (rp.restHeavy[logDay]) toast('[ REST ] '+LABELS[type]+' cleared (0 XP)  ·  rest-heavy cycle '+rp.restStreakPerDay[logDay]+'/'+REST_GRACE_CYCLES+' before penalty', 'clear');
+        else toast('[ REST ] '+LABELS[type]+' cleared (0 XP)', 'clear');
         render(); return;
       }
     }
@@ -2126,9 +2329,9 @@
     await saveLogs();
     const xpAfter = totalXP();
     const lvAfter = calcLevel(xpAfter).level;
-    const deltaXP = Math.round(xpAfter - xpBefore);
+    const deltaXP = xpAfter - xpBefore;
     const amtLabel = (amt > 0 ? '+' : '') + amt;
-    const xpLabel = (deltaXP >= 0 ? '+' : '') + deltaXP;
+    const xpLabel = (deltaXP >= 0 ? '+' : '') + fmtXP(deltaXP);
     buzz(12);
     toast(amtLabel+' '+LABELS[type]+'  ·  '+xpLabel+' XP');
     if(prevVal < goal && logs[logDay][type] >= goal){
