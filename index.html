@@ -136,7 +136,6 @@
   .rest-btn { background: rgba(255,215,0,0.08); border-color: var(--gold); color: var(--gold); }
   .rest-btn:hover { background: var(--gold); color: #000; box-shadow: 0 0 20px var(--gold-glow); }
 
-  /* ===== Riga input allenamento: [-] [n] [+] [Rest] ===== */
   .btn-input-row { display: grid; grid-template-columns: 1fr 1.5fr 1fr 1.5fr; gap: 6px; align-items: stretch; }
   .btn-input-row .add-btn { height: 38px; padding: 0; display: flex; align-items: center; justify-content: center; }
   .step-input { display: block; width: 100%; min-width: 0; height: 38px; box-sizing: border-box;
@@ -488,7 +487,6 @@
   :is([data-theme="retro"],[data-theme="angelic"],[data-theme="mono"]) .heatmap-title{font-family:'Chakra Petch',sans-serif;font-size:18px;font-weight:700;letter-spacing:0;text-shadow:none;color:var(--text);text-transform:uppercase}
   :is([data-theme="retro"],[data-theme="angelic"],[data-theme="mono"]) .heatmap-subtitle,:is([data-theme="retro"],[data-theme="angelic"],[data-theme="mono"]) .heatmap-month-row{font-family:'Space Mono',monospace}
 
-  /* ===== Info page: curtain sections ===== */
   .sys-panel.info-section { padding: 0; }
   .info-head { position: relative; display: flex; align-items: center; justify-content: center;
     width: 100%; margin: 0; padding: 17px 44px; background: none; border: none; cursor: pointer;
@@ -539,7 +537,6 @@
   :is([data-theme="retro"],[data-theme="angelic"],[data-theme="mono"]) .info-sub .info-content { border-top: 2px solid var(--line-dim); padding: 12px 12px 14px; }
   :is([data-theme="retro"],[data-theme="angelic"],[data-theme="mono"]) .info-group > .info-body > .info-body-inner > .info-content { padding: 10px 10px 12px; }
 
-  /* ===== Training Profiles ===== */
   .profile-bar-wrap { margin-top: 22px; }
   .profile-bar-label { font-family: 'Orbitron', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.2em;
     text-transform: uppercase; color: var(--text-dim); margin-bottom: 8px; text-align: center; }
@@ -622,7 +619,6 @@
   :is([data-theme="retro"],[data-theme="angelic"],[data-theme="mono"]) .profile-editor-actions button { font-family: 'Chakra Petch', sans-serif; font-size: 14px;
     border: 2px solid var(--line); border-radius: 3px; clip-path: none; box-shadow: 3px 3px 0 var(--shadow-c); }
 
-  /* ===== Side menu ===== */
   .hud-right { display: flex; align-items: center; gap: 8px; }
   .menu-btn { display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 30px; padding: 0; cursor: pointer;
     color: var(--accent); background: var(--accent-soft); border: 1px solid var(--line); box-shadow: 0 0 12px var(--accent-glow);
@@ -665,7 +661,6 @@
   .quest-card .qhead .qname { flex: 1 1 auto; min-width: 0; overflow-wrap: anywhere; line-height: 1.25; flex-wrap: nowrap; }
   .quest-card .qhead .qnum { flex: 0 0 auto; white-space: nowrap; margin-left: auto; }
 
-  /* ================= ANGELIC & MONO ================= */
   [data-theme="angelic"]{--bg:#f6efe0;--bg2:#efe5cf;--panel:#fffaf0;--panel2:#f4ebd6;--line:#c9a24a;--line-dim:rgba(201,162,74,.32);--accent:#4a8f45;--accent-glow:rgba(74,143,69,.28);--accent-soft:rgba(74,143,69,.12);--magenta:#4a8f45;--magenta-glow:rgba(74,143,69,.28);--gold:#d2a62e;--gold-glow:rgba(210,166,46,.4);--text:#3b3a33;--text-dim:#8a8577;--danger:#c4513f;--danger-glow:rgba(196,81,63,.25);--success:#4a8f45;--header-bg:#fffaf0;--bottom-bg:#fffaf0;--bg-radial:none;--overlay-bg:rgba(90,75,40,.35);--progress-track:#e9dfc6;--progress-fill-start:#4a8f45;--progress-fill-end:#d2a62e;--progress-glow:transparent;--panel-clip:none;--panel-clip-lg:none;--ink:#3b3a33;--shadow-c:rgba(168,134,52,.28);--dot:rgba(201,162,74,.14);--tag-bg:#3f7a3b;--tag-fg:#fffdf5;--ink-warn:#3f7a3b;--freeze-bg:var(--panel);--freeze-fg:#1f8fa3;--freeze-border:#46b3c4;--freeze-glow:transparent;--heat-empty-bg:#efe6d0;--heat-empty-border:var(--line-dim);--heat-incomplete-bg:#d9604c;--heat-incomplete-shadow:none;--heat-partial-bg:#e2b743;--heat-partial-shadow:none;--heat-complete-bg:#5aa655;--heat-complete-shadow:none;--heat-rested-bg:#62c4d3;--heat-rested-shadow:none;--heat-frozen-bg:#cfeef3;--heat-frozen-shadow:none;--heat-cell-radius:4px;--heat-today-outline:2px solid var(--gold)}
   [data-theme="mono"]{--bg:#000;--bg2:#0b0b0b;--panel:#000;--panel2:#141414;--line:#d6d6d6;--line-dim:rgba(214,214,214,.24);--accent:#e2e2e2;--accent-glow:transparent;--accent-soft:rgba(226,226,226,.12);--magenta:#e2e2e2;--magenta-glow:transparent;--gold:#bdbdbd;--gold-glow:transparent;--text:#f0f0f0;--text-dim:#8c8c8c;--danger:#d0d0d0;--danger-glow:transparent;--success:#e2e2e2;--header-bg:#000;--bottom-bg:#000;--bg-radial:none;--overlay-bg:rgba(0,0,0,.8);--progress-track:#1a1a1a;--progress-fill-start:#e2e2e2;--progress-fill-end:#e2e2e2;--progress-glow:transparent;--panel-clip:none;--panel-clip-lg:none;--ink:#f0f0f0;--shadow-c:#2a2a2a;--dot:transparent;--tag-bg:#e2e2e2;--tag-fg:#000;--ink-warn:#000;--freeze-bg:var(--panel);--freeze-fg:#c4c4c4;--freeze-border:var(--line);--freeze-glow:transparent;--heat-empty-bg:#121212;--heat-empty-border:var(--line-dim);--heat-incomplete-bg:#2b2b2b;--heat-incomplete-shadow:none;--heat-partial-bg:#8a8a8a;--heat-partial-shadow:none;--heat-complete-bg:#f2f2f2;--heat-complete-shadow:none;--heat-rested-bg:#4a4a4a;--heat-rested-shadow:none;--heat-frozen-bg:#cfcfcf;--heat-frozen-shadow:none;--heat-cell-radius:0;--heat-today-outline:2px solid #fff}
   .theme-toggle{flex-wrap:wrap}
@@ -750,11 +745,7 @@
   [data-theme="mono"] #areaGrad stop:nth-child(1){stop-color:#bdbdbd}
   [data-theme="mono"] #areaGrad stop:nth-child(3){stop-color:#4a4a4a}
 
-  /* ====================================================================
-     v3 fixes — Angelic tiles, header in-frame, Mono graphite + dotted bg
-     ==================================================================== */
-
-  /* ---------- 1) Header: menu button stays in-frame on narrow phones ---------- */
+  /* ---------- v3 fixes: header in-frame, angelic tiles, mono graphite ---------- */
   header.hud { gap: 10px; min-width: 0; }
   .logo { min-width: 0; overflow: hidden; }
   .logo .logo-main { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -783,7 +774,6 @@
     }
   }
 
-  /* ---------- 2) Angelic: toggle/slider elements become clean tiles ---------- */
   [data-theme="angelic"] .add-btn,
   [data-theme="angelic"] .data-io-btn,
   [data-theme="angelic"] .theme-btn,
@@ -791,56 +781,106 @@
   [data-theme="angelic"] .freeze-btn,
   [data-theme="angelic"] .reset-btn,
   [data-theme="angelic"] .sub-btn,
-  [data-theme="angelic"] .rest-btn {
-    border-radius: 6px;
-  }
-  [data-theme="angelic"] .theme-toggle {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px;
-  }
-  [data-theme="angelic"] .theme-toggle .theme-btn {
-    flex: none;
-    min-width: 0;
-    padding: 14px 8px;
-  }
+  [data-theme="angelic"] .rest-btn { border-radius: 6px; }
+  [data-theme="angelic"] .theme-toggle { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  [data-theme="angelic"] .theme-toggle .theme-btn { flex: none; min-width: 0; padding: 14px 8px; }
   [data-theme="angelic"] .step-input { border-radius: 6px; }
   [data-theme="angelic"] .btn-input-row { gap: 8px; }
 
-  /* ---------- 3) Mono: graphite tiles instead of pure black ---------- */
-  [data-theme="mono"] {
-    --panel:  #1c1c1c;
-    --panel2: #262626;
-    --dot:    rgba(255,255,255,.08);
-  }
-  [data-theme="mono"] .sub-btn,
-  [data-theme="mono"] .rest-btn,
-  [data-theme="mono"] .undo-btn,
-  [data-theme="mono"] .freeze-btn,
-  [data-theme="mono"] .data-io-btn,
-  [data-theme="mono"] .theme-btn {
-    background: var(--panel2);
-  }
+  [data-theme="mono"] { --panel: #1c1c1c; --panel2: #262626; --dot: rgba(255,255,255,.08); }
+  [data-theme="mono"] .sub-btn,[data-theme="mono"] .rest-btn,[data-theme="mono"] .undo-btn,
+  [data-theme="mono"] .freeze-btn,[data-theme="mono"] .data-io-btn,[data-theme="mono"] .theme-btn { background: var(--panel2); }
   [data-theme="mono"] .done .add-btn:not(.sub-btn):not(.rest-btn),
-  [data-theme="mono"] .done .add-btn:not(.sub-btn):not(.rest-btn):hover {
-    background: #e2e2e2;
-    color: #000;
-  }
-  [data-theme="mono"] .add-btn:hover,
-  [data-theme="mono"] .data-io-btn:hover,
-  [data-theme="mono"] .theme-btn:hover {
-    background: #303030;
-  }
-
-  /* ---------- 4) Dotted background pattern on Mono + Angelic ---------- */
+  [data-theme="mono"] .done .add-btn:not(.sub-btn):not(.rest-btn):hover { background: #e2e2e2; color: #000; }
+  [data-theme="mono"] .add-btn:hover,[data-theme="mono"] .data-io-btn:hover,[data-theme="mono"] .theme-btn:hover { background: #303030; }
   [data-theme="mono"] body {
     background: #000;
     background-image: radial-gradient(var(--dot) 1.2px, transparent 1.6px);
     background-size: 18px 18px;
     background-repeat: repeat;
   }
+
+  /* ====================================================================
+     v4 — Angelic "Paradise": cyan sky + soft cloud smudges
+     ==================================================================== */
+
+  /* Softer white dots on the sky */
+  [data-theme="angelic"] { --dot: rgba(255,255,255,.4); }
+
+  /* Body: layered cyan sky + rolling cloud smudges */
   [data-theme="angelic"] body {
-    background-size: 100% 100%, 18px 18px;
+    background-color: #a8dcef;
+    background-image:
+      radial-gradient(ellipse 55% 22% at 18% 10%, rgba(255,255,255,.9) 0%, rgba(255,255,255,0) 65%),
+      radial-gradient(ellipse 45% 18% at 78% 18%, rgba(255,255,255,.8) 0%, rgba(255,255,255,0) 65%),
+      radial-gradient(ellipse 65% 25% at 50% 36%, rgba(255,255,255,.65) 0%, rgba(255,255,255,0) 70%),
+      radial-gradient(ellipse 50% 20% at 12% 56%, rgba(255,255,255,.75) 0%, rgba(255,255,255,0) 68%),
+      radial-gradient(ellipse 60% 24% at 88% 64%, rgba(255,255,255,.7) 0%, rgba(255,255,255,0) 68%),
+      radial-gradient(ellipse 70% 26% at 30% 80%, rgba(255,255,255,.6) 0%, rgba(255,255,255,0) 70%),
+      radial-gradient(ellipse 55% 22% at 70% 90%, rgba(255,255,255,.65) 0%, rgba(255,255,255,0) 70%),
+      radial-gradient(ellipse 130% 55% at 50% 108%, rgba(255,248,220,.85) 0%, rgba(255,248,220,0) 70%),
+      linear-gradient(180deg, #6ec0dd 0%, #8fd1e6 15%, #b0dff0 35%, #cfeaf3 55%, #e2f2f7 75%, #f1f8fa 100%),
+      radial-gradient(var(--dot) 1px, transparent 1.4px);
+    background-size:
+      100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%,
+      100% 100%,
+      100% 100%,
+      16px 16px;
+    background-repeat:
+      no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat,
+      no-repeat,
+      no-repeat,
+      repeat;
+    background-attachment: fixed;
+    background-position: center, center, center, center, center, center, center, center, center, 0 0;
+  }
+
+  /* Frosted glass over the sky */
+  [data-theme="angelic"] header.hud {
+    background: linear-gradient(180deg, rgba(255,255,255,.92), rgba(230,245,250,.78));
+    border-bottom: 1.5px solid rgba(201,162,74,.3);
+    box-shadow: 0 6px 24px rgba(90,160,200,.2);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+  [data-theme="angelic"] .bottom-bar {
+    background: linear-gradient(180deg, rgba(232,246,251,.82), rgba(255,255,255,.94));
+    border-top: 1.5px solid rgba(201,162,74,.3);
+    box-shadow: 0 -6px 24px rgba(90,160,200,.18);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+  [data-theme="angelic"] .timer-strip {
+    background: rgba(255,255,255,.55);
+    border-bottom: 1px solid rgba(201,162,74,.25);
+  }
+  [data-theme="angelic"] #menu-drawer {
+    background: linear-gradient(180deg, #eaf7fb 0%, #ddeef4 100%);
+    border-left: 1.5px solid rgba(201,162,74,.35);
+    box-shadow: -10px 0 32px rgba(90,160,200,.28);
+  }
+  [data-theme="angelic"] .menu-head {
+    border-bottom: 1.5px solid rgba(201,162,74,.3);
+    background: rgba(255,255,255,.55);
+  }
+
+  /* Panels: crisp white clouds floating over the sky */
+  [data-theme="angelic"] .sys-panel {
+    background: rgba(255,253,246,.96);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border-color: rgba(201,162,74,.42);
+    box-shadow: 0 8px 26px rgba(90,160,200,.22), inset 0 1px 0 #fff;
+  }
+  [data-theme="angelic"] .info-sub,
+  [data-theme="angelic"] .profile-item,
+  [data-theme="angelic"] .profile-editor,
+  [data-theme="angelic"] .stat-item,
+  [data-theme="angelic"] .graph-container,
+  [data-theme="angelic"] .log-item {
+    background: rgba(255,253,246,.95);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
   }
 </style>
 </head>
@@ -1046,7 +1086,7 @@
   let profileName = 'Hunter';
   let activeTab = 'train';
   const THEMES = ['dark','retro','angelic','mono'];
-  const THEME_META_COLORS = { dark:'#0a0a0f', retro:'#141414', angelic:'#f6efe0', mono:'#000000' };
+  const THEME_META_COLORS = { dark:'#0a0a0f', retro:'#141414', angelic:'#a8dcef', mono:'#000000' };
   let theme = (function(){ var a = document.documentElement.getAttribute('data-theme'); return THEMES.indexOf(a) >= 0 ? a : 'dark'; })();
   let defaultMode = 'normal', wristStartDate = null;
   let touchStartX = 0, touchStartY = 0, isSwiping = false;
