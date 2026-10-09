@@ -521,14 +521,12 @@
   :is([data-theme="retro"],[data-theme="angelic"],[data-theme="mono"]) .info-section.danger .info-head:hover { background: rgba(255,90,106,.16); color: var(--danger); }
   :is([data-theme="retro"],[data-theme="angelic"],[data-theme="mono"]) .info-content { border-top: 2px solid var(--line-dim); padding: 14px 16px 16px; }
 
-  /* rank table must fit the narrow menu: compact cells, no wrapping */
   #menu-content .info-rank-table { font-size: 10px; }
   #menu-content .info-rank-table th, #menu-content .info-rank-table td { padding: 7px 3px; white-space: nowrap; }
   :is([data-theme="retro"],[data-theme="angelic"],[data-theme="mono"]) #menu-content .info-rank-table { font-size: 10.5px; }
   :is([data-theme="retro"],[data-theme="angelic"],[data-theme="mono"]) #menu-content .info-rank-table th, :is([data-theme="retro"],[data-theme="angelic"],[data-theme="mono"]) #menu-content .info-rank-table td { padding: 7px 3px; }
   .info-sub .info-content { overflow-x: auto; }
 
-  /* sub-sections inside the grouped "Info" panel */
   .info-group > .info-body > .info-body-inner > .info-content { padding: 10px 10px 12px; }
   .info-sub { border: 1px solid var(--line-dim); margin-bottom: 8px; background: var(--accent-soft); }
   .info-sub:last-child { margin-bottom: 0; }
@@ -624,7 +622,7 @@
   :is([data-theme="retro"],[data-theme="angelic"],[data-theme="mono"]) .profile-editor-actions button { font-family: 'Chakra Petch', sans-serif; font-size: 14px;
     border: 2px solid var(--line); border-radius: 3px; clip-path: none; box-shadow: 3px 3px 0 var(--shadow-c); }
 
-  /* ===== Side menu (replaces the Info tab) ===== */
+  /* ===== Side menu ===== */
   .hud-right { display: flex; align-items: center; gap: 8px; }
   .menu-btn { display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 30px; padding: 0; cursor: pointer;
     color: var(--accent); background: var(--accent-soft); border: 1px solid var(--line); box-shadow: 0 0 12px var(--accent-glow);
@@ -667,15 +665,12 @@
   .quest-card .qhead .qname { flex: 1 1 auto; min-width: 0; overflow-wrap: anywhere; line-height: 1.25; flex-wrap: nowrap; }
   .quest-card .qhead .qnum { flex: 0 0 auto; white-space: nowrap; margin-left: auto; }
 
-  /* ================= ANGELIC (light) & MONO (grayscale) — built on the Retro skin ================= */
+  /* ================= ANGELIC & MONO ================= */
   [data-theme="angelic"]{--bg:#f6efe0;--bg2:#efe5cf;--panel:#fffaf0;--panel2:#f4ebd6;--line:#c9a24a;--line-dim:rgba(201,162,74,.32);--accent:#4a8f45;--accent-glow:rgba(74,143,69,.28);--accent-soft:rgba(74,143,69,.12);--magenta:#4a8f45;--magenta-glow:rgba(74,143,69,.28);--gold:#d2a62e;--gold-glow:rgba(210,166,46,.4);--text:#3b3a33;--text-dim:#8a8577;--danger:#c4513f;--danger-glow:rgba(196,81,63,.25);--success:#4a8f45;--header-bg:#fffaf0;--bottom-bg:#fffaf0;--bg-radial:none;--overlay-bg:rgba(90,75,40,.35);--progress-track:#e9dfc6;--progress-fill-start:#4a8f45;--progress-fill-end:#d2a62e;--progress-glow:transparent;--panel-clip:none;--panel-clip-lg:none;--ink:#3b3a33;--shadow-c:rgba(168,134,52,.28);--dot:rgba(201,162,74,.14);--tag-bg:#3f7a3b;--tag-fg:#fffdf5;--ink-warn:#3f7a3b;--freeze-bg:var(--panel);--freeze-fg:#1f8fa3;--freeze-border:#46b3c4;--freeze-glow:transparent;--heat-empty-bg:#efe6d0;--heat-empty-border:var(--line-dim);--heat-incomplete-bg:#d9604c;--heat-incomplete-shadow:none;--heat-partial-bg:#e2b743;--heat-partial-shadow:none;--heat-complete-bg:#5aa655;--heat-complete-shadow:none;--heat-rested-bg:#62c4d3;--heat-rested-shadow:none;--heat-frozen-bg:#cfeef3;--heat-frozen-shadow:none;--heat-cell-radius:4px;--heat-today-outline:2px solid var(--gold)}
   [data-theme="mono"]{--bg:#000;--bg2:#0b0b0b;--panel:#000;--panel2:#141414;--line:#d6d6d6;--line-dim:rgba(214,214,214,.24);--accent:#e2e2e2;--accent-glow:transparent;--accent-soft:rgba(226,226,226,.12);--magenta:#e2e2e2;--magenta-glow:transparent;--gold:#bdbdbd;--gold-glow:transparent;--text:#f0f0f0;--text-dim:#8c8c8c;--danger:#d0d0d0;--danger-glow:transparent;--success:#e2e2e2;--header-bg:#000;--bottom-bg:#000;--bg-radial:none;--overlay-bg:rgba(0,0,0,.8);--progress-track:#1a1a1a;--progress-fill-start:#e2e2e2;--progress-fill-end:#e2e2e2;--progress-glow:transparent;--panel-clip:none;--panel-clip-lg:none;--ink:#f0f0f0;--shadow-c:#2a2a2a;--dot:transparent;--tag-bg:#e2e2e2;--tag-fg:#000;--ink-warn:#000;--freeze-bg:var(--panel);--freeze-fg:#c4c4c4;--freeze-border:var(--line);--freeze-glow:transparent;--heat-empty-bg:#121212;--heat-empty-border:var(--line-dim);--heat-incomplete-bg:#2b2b2b;--heat-incomplete-shadow:none;--heat-partial-bg:#8a8a8a;--heat-partial-shadow:none;--heat-complete-bg:#f2f2f2;--heat-complete-shadow:none;--heat-rested-bg:#4a4a4a;--heat-rested-shadow:none;--heat-frozen-bg:#cfcfcf;--heat-frozen-shadow:none;--heat-cell-radius:0;--heat-today-outline:2px solid #fff}
-
-  /* theme picker: 4 buttons in a 2x2 grid */
   .theme-toggle{flex-wrap:wrap}
   .theme-toggle .theme-btn{flex:1 1 calc(50% - 4px);min-width:110px}
 
-  /* ---------- ANGELIC: soft, rounded, serif headings, gold hairlines, halo glow ---------- */
   [data-theme="angelic"] body{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:500;background-color:var(--bg);background-image:radial-gradient(ellipse 120% 55% at 50% -8%,rgba(255,255,255,.95),rgba(255,255,255,0) 70%),radial-gradient(var(--dot) 1.2px,transparent 1.6px);background-size:100% 100%,22px 22px;background-repeat:no-repeat,repeat}
   [data-theme="angelic"] header.hud{background:linear-gradient(#fffdf6,#f7eed8);color:var(--text);border-bottom:1.5px solid var(--line);box-shadow:0 4px 16px rgba(168,134,52,.15)}
   [data-theme="angelic"] .logo{font-family:Georgia,'Times New Roman',serif;font-weight:700;color:var(--text);letter-spacing:.02em}
@@ -734,7 +729,6 @@
   [data-theme="angelic"] .graph-svg text{font-family:'Rajdhani',sans-serif}
   [data-theme="angelic"] .step-input{border-radius:10px;border-width:1.5px;font-family:'Rajdhani',sans-serif;font-weight:700}
 
-  /* ---------- MONO: pure black + grays only, no glows/gradients/animations (OLED battery saver) ---------- */
   [data-theme="mono"] *,[data-theme="mono"] *::before,[data-theme="mono"] *::after{animation:none!important;text-shadow:none!important}
   [data-theme="mono"] body{background:#000;background-image:none}
   [data-theme="mono"] header.hud,[data-theme="mono"] .timer-strip{background:#000}
@@ -749,13 +743,105 @@
   [data-theme="mono"] .daily-complete-popup .popup-title+.popup-title{color:#000!important}
   [data-theme="mono"] .lu-box .lu-label{background:#000;color:#e2e2e2}
   [data-theme="mono"] .lu-box .lu-big{color:#000}
-  /* heatmap: statuses told apart by brightness/pattern, not colour */
   [data-theme="mono"] .heatmap-cell--incomplete{background:repeating-linear-gradient(45deg,#000 0 3px,#6a6a6a 3px 6px);border-color:#6a6a6a}
   [data-theme="mono"] .heatmap-cell--rested{background:#4a4a4a;border:1px dashed #d6d6d6}
   [data-theme="mono"] .heatmap-cell--frozen{background:linear-gradient(135deg,#fff,#9a9a9a 50%,#fff);border-color:#d6d6d6}
   [data-theme="mono"] #areaGrad stop,[data-theme="mono"] #lineGrad stop{stop-color:#e2e2e2}
   [data-theme="mono"] #areaGrad stop:nth-child(1){stop-color:#bdbdbd}
   [data-theme="mono"] #areaGrad stop:nth-child(3){stop-color:#4a4a4a}
+
+  /* ====================================================================
+     v3 fixes — Angelic tiles, header in-frame, Mono graphite + dotted bg
+     ==================================================================== */
+
+  /* ---------- 1) Header: menu button stays in-frame on narrow phones ---------- */
+  header.hud { gap: 10px; min-width: 0; }
+  .logo { min-width: 0; overflow: hidden; }
+  .logo .logo-main { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .hud-right { flex-shrink: 0; }
+  :is([data-theme="retro"],[data-theme="angelic"],[data-theme="mono"]) .logo {
+    min-width: 0; overflow: hidden; text-overflow: ellipsis;
+  }
+  :is([data-theme="retro"],[data-theme="angelic"],[data-theme="mono"]) .logo .logo-main {
+    overflow: hidden; text-overflow: ellipsis;
+  }
+  [data-theme="angelic"] .logo em { padding-right: 1px; }
+
+  @media (max-width: 400px) {
+    :is([data-theme="retro"],[data-theme="angelic"],[data-theme="mono"]) .logo {
+      font-size: 17px; letter-spacing: .02em;
+    }
+    header.hud { padding-left: 12px; padding-right: 12px; gap: 6px; }
+    .hud-right { gap: 6px; }
+    .hud-chip { padding: 4px 8px; gap: 5px; font-size: 10px; }
+    .hud-chip b { font-size: 12px; }
+    .menu-btn { width: 30px; height: 28px; }
+  }
+  @media (max-width: 340px) {
+    :is([data-theme="retro"],[data-theme="angelic"],[data-theme="mono"]) .logo {
+      font-size: 15px; letter-spacing: 0;
+    }
+  }
+
+  /* ---------- 2) Angelic: toggle/slider elements become clean tiles ---------- */
+  [data-theme="angelic"] .add-btn,
+  [data-theme="angelic"] .data-io-btn,
+  [data-theme="angelic"] .theme-btn,
+  [data-theme="angelic"] .undo-btn,
+  [data-theme="angelic"] .freeze-btn,
+  [data-theme="angelic"] .reset-btn,
+  [data-theme="angelic"] .sub-btn,
+  [data-theme="angelic"] .rest-btn {
+    border-radius: 6px;
+  }
+  [data-theme="angelic"] .theme-toggle {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+  [data-theme="angelic"] .theme-toggle .theme-btn {
+    flex: none;
+    min-width: 0;
+    padding: 14px 8px;
+  }
+  [data-theme="angelic"] .step-input { border-radius: 6px; }
+  [data-theme="angelic"] .btn-input-row { gap: 8px; }
+
+  /* ---------- 3) Mono: graphite tiles instead of pure black ---------- */
+  [data-theme="mono"] {
+    --panel:  #1c1c1c;
+    --panel2: #262626;
+    --dot:    rgba(255,255,255,.08);
+  }
+  [data-theme="mono"] .sub-btn,
+  [data-theme="mono"] .rest-btn,
+  [data-theme="mono"] .undo-btn,
+  [data-theme="mono"] .freeze-btn,
+  [data-theme="mono"] .data-io-btn,
+  [data-theme="mono"] .theme-btn {
+    background: var(--panel2);
+  }
+  [data-theme="mono"] .done .add-btn:not(.sub-btn):not(.rest-btn),
+  [data-theme="mono"] .done .add-btn:not(.sub-btn):not(.rest-btn):hover {
+    background: #e2e2e2;
+    color: #000;
+  }
+  [data-theme="mono"] .add-btn:hover,
+  [data-theme="mono"] .data-io-btn:hover,
+  [data-theme="mono"] .theme-btn:hover {
+    background: #303030;
+  }
+
+  /* ---------- 4) Dotted background pattern on Mono + Angelic ---------- */
+  [data-theme="mono"] body {
+    background: #000;
+    background-image: radial-gradient(var(--dot) 1.2px, transparent 1.6px);
+    background-size: 18px 18px;
+    background-repeat: repeat;
+  }
+  [data-theme="angelic"] body {
+    background-size: 100% 100%, 18px 18px;
+  }
 </style>
 </head>
 <body>
@@ -790,14 +876,13 @@
   if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js'); }
 
   const DAILY_PENALTY = 400;
-  const REST_GRACE_CYCLES = 3;  /* consecutive rest-heavy cycles allowed before the rest penalty kicks in */
+  const REST_GRACE_CYCLES = 3;
   const FREEZE_BUDGET_PER_MONTH = 1;
   const BACKUP_INTERVAL_DAYS = 14;
   const QUEST_WINDOW_HOURS = 48;
   const PRIVACY_URL = 'https://hippothedev.github.io/privacy.html';
-  const XP_PER_EXERCISE = 60;   /* total XP for fully completing ONE exercise (normal mode) */
+  const XP_PER_EXERCISE = 60;
 
-  /* ---------- Exercise registry ---------- */
   const HARD_MULT = 5 / 3;
   const BASE_REPS = 60;
   const EXERCISE_CATEGORIES = [
@@ -919,8 +1004,6 @@
       ["legs", "Dumbbell Thrusters", "Combines a front squat with an overhead press for full-body power."]
     ];
     const ALIAS = { 'push-ups':'pushups', 'standard push-ups':'pushups', 'bodyweight squats':'squats', 'standard crunches':'crunches' };
-    /* Display labels get shortened, but KEYS stay derived from the original
-       names so existing saved data keeps working. */
     function displayLabel(name){
       return name.toUpperCase().replace(/DUMBBELLS/g, 'DUM.').replace(/DUMBBELL/g, 'DUM.');
     }
@@ -986,7 +1069,6 @@
   function keyOf(dt){ return dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0'); }
   function todayKey(){ return keyOf(new Date()); }
 
-  /* ---------- Cycles ---------- */
   function computeAnchor(){
     const allDays = [...Object.keys(logs), ...Object.keys(penalties), ...Object.keys(frozenDays)];
     if (allDays.length === 0) { const t = new Date(); t.setHours(0,0,0,0); return t.getTime(); }
@@ -1030,7 +1112,6 @@
     return defaultMode;
   }
 
-  /* ---------- Profiles ---------- */
   function uid(){ return 'p_' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4); }
   function makeProfile(name, exercises, goals){
     return { id: uid(), name: name || 'New Profile', exercises: (exercises || []).slice(), goals: goals || {} };
@@ -1041,8 +1122,6 @@
   function getProfileById(id){ return profiles.find(p => p.id === id) || null; }
   function getActiveProfile(){ return getProfileById(activeProfileId) || profiles[0] || null; }
 
-  /* The current cycle ALWAYS follows the active profile, so profiles can be
-     swapped at any time. Past cycles are frozen via their exSnapshot. */
   function getProfileForDay(dk){
     const c = getCurrentCycle();
     if (c && dk === c.startDay){
@@ -1116,22 +1195,9 @@
     }
     return Math.max(1, Math.round(getBaseGoal(type, dk) * getModeMult(dk)));
   }
-
-  /* ===== XP MODEL =====
-     Every exercise has a TOTAL reward for fully completing its quota:
-        normal : 60 XP
-        hard   : 60 * 5/3 = 100 XP
-     XP is earned PROGRESSIVELY, in proportion to how much of the quota you
-     have logged:
-        xp = (value / goal) * total
-     So 1,000 of 12,000 steps = 60 * 1000/12000 = 5 XP,
-        3,000 of 12,000 steps = 15 XP,
-     and finishing the quota banks the full 60.
-     The rank multiplier is applied on top of this (see computeXPTimeline). */
   function getExerciseTotalXP(type, dk){
     return Math.round(XP_PER_EXERCISE * getModeMult(dk) * 100) / 100;
   }
-  /* Kept for legacy (pre-cutover) days only. */
   function getMaxXPForExercise(type, dk){
     const reg = EXERCISE_REGISTRY[type];
     if (!reg) return 100;
@@ -1161,9 +1227,6 @@
     LocalStore.set('goalCutover', goalCutover);
     markTimelineDirty();
   }
-  /* The rest-penalty feature has its own cutover so past data is never
-     retroactively affected. Days before this date are completely ignored by
-     the rest-streak logic — they neither increment nor reset the streak. */
   function initRestPenaltyCutover(candidate){
     if (typeof candidate === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(candidate)){ restPenaltyCutover = candidate; }
     else {
@@ -1224,7 +1287,6 @@
   function fmtDateShort(key){ const [y,m,d] = key.split('-').map(Number); return new Date(y, m-1, d).toLocaleDateString('en-US', { month:'short', day:'numeric' }); }
   function dowOf(key){ const [y,m,d] = key.split('-').map(Number); return new Date(y,m-1,d).toLocaleDateString('en-US',{weekday:'short'}); }
 
-  /* ---------- Streak freeze ---------- */
   function isValidKey(k){ return typeof k === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(k); }
   function cycleStartDayOf(idx){ return keyOf(new Date(cycleStartMsOf(idx))); }
   function getFreezesUsedThisMonth(){ const ym = todayKey().slice(0, 7); return freezeStarts.filter(k => k.startsWith(ym)).length; }
@@ -1254,7 +1316,6 @@
     return changed;
   }
 
-  /* ---------- XP: proportional model ---------- */
   function dayXP(key){
     if(frozenDays[key]) return 0;
     if(penalties[key]) return -DAILY_PENALTY;
@@ -1264,7 +1325,6 @@
     const goals = getGoalsForDate(key);
     let sum = 0;
     if (isLegacyDay(key)){
-      /* legacy proportional model using the old per-exercise maxXP */
       for(const type in goals){
         const v = entry[type] || 0;
         if (rested.includes(type)) continue;
@@ -1274,7 +1334,6 @@
       }
       return sum;
     }
-    /* new model: value / goal * totalExerciseXP, capped at the total */
     for(const type in goals){
       if (rested.includes(type)) continue;
       const v = entry[type] || 0;
@@ -1287,8 +1346,6 @@
   }
   function getMultiplierForRank(rank){ return RANK_MULTIPLIERS[rank] || 1.0; }
 
-  /* Converts raw XP into effective XP, switching to the new rank's multiplier
-     the moment a rank boundary is crossed (even mid-day / mid-input). */
   const RANK_START_LEVELS = [['E',1],['D',5],['C',10],['B',15],['A',25],['S',40],['SS',65],['Monarch',99]];
   function applyRankMultiplier(startXP, raw){
     if (raw <= 0) return raw * getMultiplierForRank(rankOf(calcLevel(startXP).level));
@@ -1299,7 +1356,7 @@
       const idx = RANK_START_LEVELS.findIndex(r => r[0] === rank);
       const next = RANK_START_LEVELS[idx + 1];
       if (!next){ gained += remaining * mult; break; }
-      const room = totalXpForLevel(next[1]) - pos;   /* effective XP left in this rank */
+      const room = totalXpForLevel(next[1]) - pos;
       const rawNeeded = room / mult;
       if (remaining <= rawNeeded){ gained += remaining * mult; break; }
       gained += room; remaining -= rawNeeded; pos += room;
@@ -1317,9 +1374,6 @@
     let restStreak = 0;
     for(const k of days){
       let raw = dayXP(k);
-      /* Rest-heavy streak: >50% of exercises rested = rest-heavy cycle; >50% truly done resets the streak.
-         Frozen / failed cycles neither add to nor reset it.
-         Days before restPenaltyCutover are COMPLETELY ignored — past data stays untouched. */
       const restEligible = !restPenaltyCutover || k >= restPenaltyCutover;
       if (restEligible && !frozenDays[k] && !penalties[k] && logs[k]){
         const active = getActiveExercises(k), n = active.length;
@@ -2097,7 +2151,6 @@
     return '<div class="profile-container"><h1 class="page-title">Hunter Profile</h1>'+topHtml+panel+'</div>';
   }
 
-  /* ---------- Side menu ---------- */
   let menuOpen = false;
   function refreshMenu(){
     const box = document.getElementById('menu-content');
@@ -2156,11 +2209,6 @@
     updateHud();
   }
 
-  /* ---------- Profile actions ---------- */
-  /* Switching profiles is now allowed at ANY moment, including mid-cycle.
-     - exercises present in both profiles keep their logged value / rest state
-     - exercises that leave the profile are nullified (value 0, rest cleared)
-     - exercises that join start from 0                                        */
   async function setActiveProfile(id){
     const p = getProfileById(id);
     if (!p) return;
@@ -2393,7 +2441,6 @@
     render();
   }
 
-  /* helper: pretty-print XP deltas (may be fractional) */
   function fmtXP(v){
     const r = Math.round(v * 100) / 100;
     if (Number.isInteger(r)) return String(r);
@@ -2523,7 +2570,6 @@
     b.addEventListener('click', ()=>{ buzz(8); activeTab = b.dataset.tab; render(); });
   });
 
-  /* ---------- Daily reminders ---------- */
   const REM_CACHE = 'awakening-state', REM_URL = './__reminder-state.json';
   const REMINDER_GRACE_MIN = 10;
   const REM_DEFAULT = { enabled: false, morning: '10:00', evening: true, eveningTime: '20:00' };
